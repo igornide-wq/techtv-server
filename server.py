@@ -153,6 +153,32 @@ def consulta_por_nome(nome: str):
             })
     return resultado
 
+
+class AprovacaoOrcamento(BaseModel):
+    aprovado: bool
+    obs: Optional[str] = ""
+
+@app.patch("/os/{numero}/orcamento")
+def aprovar_orcamento(numero: int, req: AprovacaoOrcamento):
+    """Rota pública — cliente aprova ou rejeita o orçamento."""
+    data = _load()
+    for o in data["ordens"]:
+        if o.get("num") == numero:
+            o["orcamento_status"] = "aprovado" if req.aprovado else "rejeitado"
+            o["orcamento_obs"]    = req.obs or ""
+            o["orcamento_em"]     = datetime.now().strftime("%d/%m/%Y %H:%M")
+            o.setdefault("historico", []).append({
+                "de": o.get("status",""),
+                "para": o.get("status",""),
+                "por": "Cliente",
+                "em": datetime.now().strftime("%d/%m/%Y %H:%M"),
+                "obs": "Orçamento " + ("APROVADO" if req.aprovado else "REJEITADO") +
+                       (" — " + req.obs if req.obs else "")
+            })
+            _save(data)
+            return {"ok": True, "orcamento_status": o["orcamento_status"]}
+    raise HTTPException(404, "OS não encontrada")
+
 # ── Rotas autenticadas ─────────────────────────────────────────────────────────
 @app.get("/os")
 def listar_ordens(
