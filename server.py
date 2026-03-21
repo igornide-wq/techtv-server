@@ -56,6 +56,21 @@ def init_db():
 
 
 
+
+@app.get("/reset-admin")
+def reset_admin():
+    """Reseta a senha do admin para admin123. Remova após usar."""
+    conn = get_db()
+    # Deletar e recriar admin
+    conn.execute("DELETE FROM usuarios WHERE email='admin@techtv.com'")
+    conn.execute(
+        "INSERT INTO usuarios (nome, email, senha_hash, perfil) VALUES (?,?,?,?)",
+        ("Admin", "admin@techtv.com", _hash("admin123"), "admin")
+    )
+    conn.commit()
+    conn.close()
+    return {"ok": True, "msg": "Admin resetado. Email: admin@techtv.com | Senha: admin123"}
+
 # ── Auth ───────────────────────────────────────────────────────────────────────
 def verificar_token(authorization: str = Header(None)):
     if not authorization or not authorization.startswith("Bearer "):
