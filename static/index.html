@@ -423,7 +423,8 @@ function renderResultadoPublico(o) {
       </div>
     </div>
     ${srvHtml}
-    <button class="btn btn-cinza" style="margin-top:4px" onclick="document.getElementById('resultado-pub').innerHTML='';document.getElementById('c-num').value='';document.getElementById('c-nome').value=''">
+    ${renderOrcamentoPublico(o)}
+    <button class="btn btn-cinza" style="margin-top:8px" onclick="document.getElementById('resultado-pub').innerHTML='';document.getElementById('c-num').value='';document.getElementById('c-nome').value=''">
       Nova consulta
     </button>`;
 }
@@ -692,7 +693,7 @@ async function salvarEdicao(num) {
     fecharModalOs();
     carregarDashboard();
     carregarOrdens(filtroAtual);
-  } catch(e) { toast('Erro ao salvar: ' + (e.message||'')); }
+  } catch(e) { toast('Erro: ' + (e.message||'') + ' — Sincronize o desktop primeiro'); }
 }
 
 function fecharModalOs()      { document.getElementById('modal-os').classList.remove('show'); }
@@ -717,6 +718,73 @@ function toast(msg, d=3000) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), d);
+}
+
+// ── Orçamento público ──────────────────────────────────────────────────────────
+function renderOrcamentoPublico(o) {
+  const servicos = o.servicos || [];
+  const total = o.total || 0;
+  const orc_status = o.orcamento_status || '';
+  const orc_em = o.orcamento_em || '';
+
+  if (!servicos.length) return '';
+
+  const status_orc = {
+    'aprovado': '<div style="background:#d1fae5;color:#065f46;border-radius:10px;padding:12px;text-align:center;font-weight:700;font-size:15px">✅ Orçamento aprovado em ' + orc_em + '</div>',
+    'rejeitado': '<div style="background:#fee2e2;color:#b91c1c;border-radius:10px;padding:12px;text-align:center;font-weight:700;font-size:15px">❌ Orçamento rejeitado em ' + orc_em + '</div>',
+  };
+
+  if (status_orc[orc_status]) return status_orc[orc_status];
+
+  // Mostrar orçamento para aprovação
+  return `
+    <div class="card" style="margin-top:4px">
+      <div class="card-head" style="background:#fffbeb;color:#92400e">
+        💰 Orçamento aguardando aprovação
+      </div>
+      <div class="card-body">
+        ${servicos.map(s => `
+          <div class="srv-linha">
+            <span>${s.desc} <span style="color:var(--cinza);font-size:12px">×${s.qtd}</span></span>
+            <span style="font-weight:600">R$ ${fmt(s.qtd * s.val)}</span>
+          </div>`).join('')}
+        <div class="srv-total">
+          <span>Total</span>
+          <span>R$ ${fmt(total)}</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:8px">
+      <div class="campo"><label>Observação (opcional)</label>
+        <input id="orc-obs-${o.num}" placeholder="Ex: Pode prosseguir, aguarde contato...">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px">
+        <button class="btn btn-verde" onclick="responderOrcamento(${o.num}, true)">
+          ✅ Aprovar orçamento
+        </button>
+        <button class="btn btn-verm" onclick="responderOrcamento(${o.num}, false)">
+          ❌ Rejeitar
+        </button>
+      </div>
+    </div>`;
+}
+
+async function responderOrcamento(num, aprovado) {
+  const obs = document.getElementById('orc-obs-' + num)?.value || '';
+  try {
+    await fetch(API + '/os/' + num + '/orcamento', {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({aprovado, obs})
+    }).then(r => r.json());
+    toast(aprovado ? 'Orçamento aprovado! Entraremos em contato.' : 'Orçamento rejeitado. Entraremos em contato.');
+    // Recarregar consulta
+    document.getElementById('c-num').value = num;
+    mudarTabBusca('numero', document.querySelector('.tab-busca'));
+    setTimeout(() => consultarPorNumero(), 500);
+  } catch(e) {
+    toast('Erro ao responder orçamento');
+  }
 }
 </script>
 </body>
