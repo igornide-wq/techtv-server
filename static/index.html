@@ -409,7 +409,8 @@ function renderResultadoPublico(o) {
     <div class="card">
       <div class="status-box" style="background:${cores[o.status]||'#f3f4f6'}">
         <div class="status-emoji">${emojis[o.status]||'🔧'}</div>
-        <div class="status-nome">${o.status}</div>
+        <div class="status-nome">${o.status}${o.orcamento_status==='aprovado' && o.status!=='Entregue' ? ' ✅' : ''}</div>
+        ${o.orcamento_status==='aprovado' && o.status==='Pronto' ? '<div style="font-size:13px;margin-top:4px;font-weight:600">Pronta para retirada!</div>' : ''}
         <div class="status-num">OS #${o.num}</div>
       </div>
       <div class="card-body">
@@ -729,42 +730,66 @@ function renderOrcamentoPublico(o) {
 
   if (!servicos.length) return '';
 
-  const status_orc = {
-    'aprovado': '<div style="background:#d1fae5;color:#065f46;border-radius:10px;padding:12px;text-align:center;font-weight:700;font-size:15px">✅ Orçamento aprovado em ' + orc_em + '</div>',
-    'rejeitado': '<div style="background:#fee2e2;color:#b91c1c;border-radius:10px;padding:12px;text-align:center;font-weight:700;font-size:15px">❌ Orçamento rejeitado em ' + orc_em + '</div>',
-  };
+  // Separar mão de obra e materiais
+  const palavras_mao_obra = ['mão de obra','mao de obra','serviço','servico','diagnóstico','diagnostico','visita','instalação','instalacao','reparo','conserto'];
+  const mao_obra = servicos.filter(s => palavras_mao_obra.some(p => s.desc.toLowerCase().includes(p)));
+  const materiais = servicos.filter(s => !palavras_mao_obra.some(p => s.desc.toLowerCase().includes(p)));
+  
+  const total_mao = mao_obra.reduce((a,s) => a + s.qtd*s.val, 0);
+  const total_mat = materiais.reduce((a,s) => a + s.qtd*s.val, 0);
 
-  if (status_orc[orc_status]) return status_orc[orc_status];
+  if (orc_status === 'aprovado') return `
+    <div style="background:#d1fae5;color:#065f46;border-radius:10px;padding:14px;text-align:center;margin-top:4px">
+      <div style="font-size:24px">✅</div>
+      <div style="font-weight:800;font-size:16px;margin-top:4px">Orçamento aprovado</div>
+      <div style="font-size:12px;opacity:0.8;margin-top:2px">${orc_em}</div>
+    </div>`;
+  
+  if (orc_status === 'rejeitado') return `
+    <div style="background:#fee2e2;color:#b91c1c;border-radius:10px;padding:14px;text-align:center;margin-top:4px">
+      <div style="font-size:24px">❌</div>
+      <div style="font-weight:800;font-size:16px;margin-top:4px">Orçamento rejeitado</div>
+      <div style="font-size:12px;opacity:0.8;margin-top:2px">${orc_em}</div>
+    </div>`;
 
-  // Mostrar orçamento para aprovação
+  // Aguardando aprovação
   return `
     <div class="card" style="margin-top:4px">
-      <div class="card-head" style="background:#fffbeb;color:#92400e">
-        💰 Orçamento aguardando aprovação
+      <div class="card-head" style="background:#fffbeb;color:#92400e;font-size:15px">
+        💰 Orçamento — Aguardando sua aprovação
       </div>
       <div class="card-body">
-        ${servicos.map(s => `
-          <div class="srv-linha">
-            <span>${s.desc} <span style="color:var(--cinza);font-size:12px">×${s.qtd}</span></span>
-            <span style="font-weight:600">R$ ${fmt(s.qtd * s.val)}</span>
-          </div>`).join('')}
+        ${mao_obra.length ? `
+          <div style="font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;margin-bottom:6px">Mão de obra</div>
+          ${mao_obra.map(s => `
+            <div class="srv-linha">
+              <span>${s.desc}</span>
+              <span style="font-weight:600">R$ ${fmt(s.qtd*s.val)}</span>
+            </div>`).join('')}
+          <div style="text-align:right;font-size:12px;color:var(--cinza);margin-bottom:12px">Subtotal: R$ ${fmt(total_mao)}</div>
+        ` : ''}
+        ${materiais.length ? `
+          <div style="font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;margin-bottom:6px">Materiais / Peças</div>
+          ${materiais.map(s => `
+            <div class="srv-linha">
+              <span>${s.desc} <span style="color:var(--cinza);font-size:11px">×${s.qtd}</span></span>
+              <span style="font-weight:600">R$ ${fmt(s.qtd*s.val)}</span>
+            </div>`).join('')}
+          <div style="text-align:right;font-size:12px;color:var(--cinza);margin-bottom:12px">Subtotal: R$ ${fmt(total_mat)}</div>
+        ` : ''}
         <div class="srv-total">
-          <span>Total</span>
+          <span>Total geral</span>
           <span>R$ ${fmt(total)}</span>
         </div>
       </div>
     </div>
     <div style="margin-top:8px">
       <div class="campo"><label>Observação (opcional)</label>
-        <input id="orc-obs-${o.num}" placeholder="Ex: Pode prosseguir, aguarde contato...">
+        <input id="orc-obs-${o.num}" placeholder="Ex: Autorizo o serviço...">
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px">
-        <button class="btn btn-verde" onclick="responderOrcamento(${o.num}, true)">
-          ✅ Aprovar orçamento
-        </button>
-        <button class="btn btn-verm" onclick="responderOrcamento(${o.num}, false)">
-          ❌ Rejeitar
-        </button>
+        <button class="btn btn-verde" onclick="responderOrcamento(${o.num}, true)">✅ Aprovar</button>
+        <button class="btn btn-verm" onclick="responderOrcamento(${o.num}, false)">❌ Rejeitar</button>
       </div>
     </div>`;
 }
