@@ -20,7 +20,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DATA_FILE  = os.environ.get("DATA_FILE", "dados_server.json")
+# Caminho dos dados — usa volume do Railway se disponível, senão /app
+_vol = os.environ.get("RAILWAY_VOLUME_MOUNT_PATH", "")
+_app_dir = os.path.dirname(os.path.abspath(__file__))
+_data_dir = _vol if _vol else _app_dir
+DATA_FILE = os.path.join(_data_dir, os.environ.get("DATA_FILE", "dados_server.json"))
+print(f"[TechTV] Dados em: {DATA_FILE}", flush=True)
 API_SECRET = os.environ.get("API_SECRET", "techtv_secret_troque_isso")  # troque em produção
 
 # ── Persistência ───────────────────────────────────────────────────────────────
