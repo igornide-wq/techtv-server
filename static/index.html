@@ -689,11 +689,19 @@ async function salvarEdicao(num) {
   const status = document.getElementById('novo-status').value;
   const obs    = document.getElementById('obs-status').value;
   try {
-    await req('/os/' + num + '/editar', 'PATCH', {servicos: servicosEdit, status, observacao: obs});
+    const r = await req('/os/' + num + '/editar', 'PATCH', {servicos: servicosEdit, status, observacao: obs});
     toast('OS atualizada!');
     fecharModalOs();
     carregarDashboard();
     carregarOrdens(filtroAtual);
+    // WhatsApp automático quando ficar Pronto
+    if (r.wpp_link) {
+      setTimeout(() => {
+        if (confirm('✅ OS marcada como PRONTA!\n\nDeseja enviar mensagem pelo WhatsApp para o cliente?')) {
+          window.open(r.wpp_link, '_blank');
+        }
+      }, 400);
+    }
   } catch(e) { toast('Erro: ' + (e.message||'') + ' — Sincronize o desktop primeiro'); }
 }
 
