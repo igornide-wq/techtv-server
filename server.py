@@ -25,6 +25,8 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+def _hash(s): return hashlib.sha256(s.encode()).hexdigest()
+
 def init_db():
     conn = get_db()
     conn.execute("""
@@ -52,9 +54,7 @@ def init_db():
     conn.commit()
     conn.close()
 
-init_db()
 
-def _hash(s): return hashlib.sha256(s.encode()).hexdigest()
 
 # ── Auth ───────────────────────────────────────────────────────────────────────
 def verificar_token(authorization: str = Header(None)):
