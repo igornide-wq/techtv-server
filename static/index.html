@@ -72,6 +72,7 @@ input:focus,select:focus{border-color:var(--azul)}
 .b-andamento{background:#fef3c7;color:#92400e}
 .b-pronto{background:#d1fae5;color:#065f46}
 .b-entregue{background:#f3f4f6;color:#374151}
+.b-orc{background:#fef9c3;color:#854d0e}
 
 /* Serviços na consulta */
 .srv-linha{display:flex;justify-content:space-between;padding:8px 0;
@@ -268,6 +269,7 @@ input:focus,select:focus{border-color:var(--azul)}
       <button class="filtro ativo" onclick="filtrar('',this)">Todas</button>
       <button class="filtro" onclick="filtrar('Aberta',this)">Abertas</button>
       <button class="filtro" onclick="filtrar('Em andamento',this)">Andamento</button>
+      <button class="filtro" onclick="filtrar('Orçamento',this)">Orçamento</button>
       <button class="filtro" onclick="filtrar('Pronto',this)">Prontas</button>
       <button class="filtro" onclick="filtrar('Entregue',this)">Entregues</button>
     </div>
@@ -621,7 +623,7 @@ function renderModalOS(o) {
       <div class="card-body">
         <div class="campo"><label>Novo status</label>
           <select id="novo-status">
-            ${['Aberta','Em andamento','Pronto','Entregue'].map(s =>
+            ${['Aberta','Em andamento','Orçamento','Pronto','Entregue'].map(s =>
               `<option ${s===o.status?'selected':''}>${s}</option>`).join('')}
           </select>
         </div>
@@ -697,7 +699,8 @@ async function salvarEdicao(num) {
     // WhatsApp automático quando ficar Pronto
     if (r.wpp_link) {
       setTimeout(() => {
-        if (confirm('✅ OS marcada como PRONTA!\n\nDeseja enviar mensagem pelo WhatsApp para o cliente?')) {
+        const msg_wpp = status === 'Orçamento' ? '💰 Orçamento enviado!\n\nDeseja abrir o WhatsApp para enviar ao cliente?' : '✅ OS marcada como PRONTA!\n\nDeseja enviar mensagem pelo WhatsApp para o cliente?';
+        if (confirm(msg_wpp)) {
           window.open(r.wpp_link, '_blank');
         }
       }, 400);
@@ -718,7 +721,7 @@ async function req(path, method = 'GET', body = null) {
   return d;
 }
 function bc(s) {
-  return {'Aberta':'b-aberta','Em andamento':'b-andamento','Pronto':'b-pronto','Entregue':'b-entregue'}[s]||'b-entregue';
+  return {'Aberta':'b-aberta','Em andamento':'b-andamento','Orçamento':'b-orc','Pronto':'b-pronto','Entregue':'b-entregue'}[s]||'b-entregue';
 }
 function fmt(v) { return (parseFloat(v)||0).toFixed(2).replace('.',','); }
 function show(id) { document.getElementById(id).style.display = 'block'; }
@@ -810,15 +813,4 @@ async function responderOrcamento(num, aprovado) {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({aprovado, obs})
     }).then(r => r.json());
-    toast(aprovado ? 'Orçamento aprovado! Entraremos em contato.' : 'Orçamento rejeitado. Entraremos em contato.');
-    // Recarregar consulta
-    document.getElementById('c-num').value = num;
-    mudarTabBusca('numero', document.querySelector('.tab-busca'));
-    setTimeout(() => consultarPorNumero(), 500);
-  } catch(e) {
-    toast('Erro ao responder orçamento');
-  }
-}
-</script>
-</body>
-</html>
+    toast(aprovado ? 'Orçamento aprovado! Entraremos em contato.' : 'Orçamento rejeitado. Entraremos em co
