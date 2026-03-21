@@ -1,1 +1,723 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2563eb">
+<title>TechTV — Assistência Técnica</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --azul:#2563eb;--azul-esc:#1d4ed8;--verde:#166534;--verde-bg:#f0fdf4;
+  --amarelo:#92400e;--amarelo-bg:#fffbeb;--cinza:#6b7280;
+  --vermelho:#b91c1c;--vermelho-bg:#fef2f2;
+  --borda:#e5e7eb;--fundo:#f3f4f6;--branco:#fff;--texto:#111827;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--fundo);color:var(--texto);min-height:100vh;max-width:480px;margin:0 auto}
 
+/* ── Topo consulta pública ── */
+.topo-pub{background:var(--azul);padding:28px 24px 24px;color:#fff;text-align:center}
+.topo-logo{font-size:30px;font-weight:900;letter-spacing:-1px}
+.topo-sub{font-size:13px;opacity:0.8;margin-top:3px}
+.btn-tecnico{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.35);
+  color:#fff;border-radius:8px;padding:7px 16px;font-size:12px;
+  cursor:pointer;font-weight:600;margin-top:14px;display:inline-block}
+.btn-tecnico:hover{background:rgba(255,255,255,0.25)}
+
+/* ── Consulta pública ── */
+.consulta-wrap{padding:20px}
+.consulta-card{background:#fff;border-radius:14px;border:1px solid var(--borda);
+  padding:20px;margin-bottom:16px}
+.consulta-titulo{font-size:15px;font-weight:700;margin-bottom:14px;color:var(--texto)}
+.tabs-busca{display:flex;gap:6px;margin-bottom:14px}
+.tab-busca{flex:1;padding:9px;border:1.5px solid var(--borda);border-radius:8px;
+  background:#fff;font-size:13px;font-weight:600;color:var(--cinza);cursor:pointer;text-align:center}
+.tab-busca.ativo{background:var(--azul);color:#fff;border-color:var(--azul)}
+
+input,select,textarea{width:100%;background:#fff;border:1.5px solid var(--borda);
+  border-radius:10px;padding:12px 14px;font-size:15px;color:var(--texto);
+  outline:none;-webkit-appearance:none}
+input:focus,select:focus{border-color:var(--azul)}
+.campo{margin-bottom:12px}
+.campo label{display:block;font-size:11px;font-weight:700;color:var(--cinza);
+  margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;
+  font-weight:700;cursor:pointer;transition:transform 0.1s}
+.btn:active{transform:scale(0.97)}
+.btn-azul{background:var(--azul);color:#fff}
+.btn-cinza{background:#f3f4f6;color:#374151;border:1.5px solid var(--borda)}
+.btn-verde{background:var(--verde-bg);color:var(--verde);border:1.5px solid #86efac}
+.btn-verm{background:var(--vermelho-bg);color:var(--vermelho);border:1.5px solid #fca5a5}
+.btn-sm{padding:8px 14px;font-size:13px;width:auto;border-radius:8px;font-weight:600}
+
+/* ── Resultado consulta ── */
+.resultado-wrap{margin-top:4px}
+.status-box{text-align:center;padding:24px 16px;border-radius:12px 12px 0 0}
+.status-emoji{font-size:44px}
+.status-nome{font-size:20px;font-weight:800;margin-top:6px}
+.status-num{font-size:12px;opacity:0.7;margin-top:2px}
+.detalhe-row{display:flex;padding:9px 0;border-bottom:1px solid var(--borda);align-items:flex-start}
+.detalhe-row:last-child{border-bottom:none}
+.detalhe-lbl{font-size:11px;color:var(--cinza);min-width:100px;font-weight:600;padding-top:1px}
+.detalhe-val{font-size:14px;flex:1}
+.card{background:#fff;border-radius:12px;border:1px solid var(--borda);margin-bottom:12px;overflow:hidden}
+.card-head{padding:12px 16px;border-bottom:1px solid var(--borda);
+  display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:14px}
+.card-body{padding:14px 16px}
+.badge{display:inline-flex;align-items:center;padding:4px 10px;
+  border-radius:999px;font-size:11px;font-weight:700}
+.b-aberta{background:#dbeafe;color:#1d4ed8}
+.b-andamento{background:#fef3c7;color:#92400e}
+.b-pronto{background:#d1fae5;color:#065f46}
+.b-entregue{background:#f3f4f6;color:#374151}
+
+/* Serviços na consulta */
+.srv-linha{display:flex;justify-content:space-between;padding:8px 0;
+  border-bottom:1px solid var(--borda);font-size:13px}
+.srv-linha:last-child{border-bottom:none}
+.srv-total{display:flex;justify-content:space-between;padding:10px 0 0;
+  font-weight:800;font-size:15px}
+
+/* Lista resultados por nome */
+.os-card{background:#fff;border-radius:12px;border:1px solid var(--borda);
+  padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:transform 0.1s}
+.os-card:active{transform:scale(0.98)}
+.os-num{font-size:12px;font-weight:700;color:var(--azul)}
+.os-cliente{font-size:15px;font-weight:600;margin:3px 0 2px}
+.os-apar{font-size:12px;color:var(--cinza)}
+.os-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+
+/* ── Login modal ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;
+  display:none;align-items:center;justify-content:center;padding:20px}
+.modal-bg.show{display:flex}
+.modal-login{background:#fff;border-radius:16px;width:100%;max-width:360px;
+  padding:28px 24px}
+.modal-logo{font-size:24px;font-weight:900;color:var(--azul);text-align:center;margin-bottom:4px}
+.modal-sub{text-align:center;color:var(--cinza);font-size:13px;margin-bottom:20px}
+
+/* ── App técnico ── */
+.header{background:var(--azul);color:#fff;padding:14px 18px;display:flex;
+  align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+.header-title{font-size:18px;font-weight:700}
+.header-sub{font-size:11px;opacity:0.75;margin-top:1px}
+.btn-sair{background:rgba(255,255,255,0.18);border:none;color:#fff;
+  border-radius:8px;padding:7px 14px;font-size:13px;cursor:pointer;font-weight:600}
+.nav{display:flex;background:#fff;border-bottom:2px solid var(--borda);
+  position:sticky;top:60px;z-index:99;overflow-x:auto}
+.nav-btn{flex:1;min-width:72px;border:none;background:none;padding:12px 4px;
+  font-size:12px;color:var(--cinza);cursor:pointer;
+  border-bottom:3px solid transparent;font-weight:600;white-space:nowrap}
+.nav-btn.ativo{color:var(--azul);border-bottom-color:var(--azul)}
+.tela{display:none;padding:14px;padding-bottom:90px}
+.tela.ativa{display:block}
+.metricas{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.metrica{background:#fff;border-radius:12px;border:1px solid var(--borda);padding:14px;text-align:center}
+.metrica-val{font-size:26px;font-weight:800;line-height:1}
+.metrica-lbl{font-size:11px;color:var(--cinza);margin-top:3px}
+.m-azul .metrica-val{color:var(--azul)}
+.m-verde .metrica-val{color:var(--verde)}
+.m-am .metrica-val{color:var(--amarelo)}
+.filtros{display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px}
+.filtro{white-space:nowrap;padding:7px 14px;border-radius:999px;font-size:12px;
+  border:1.5px solid var(--borda);background:#fff;cursor:pointer;font-weight:600}
+.filtro.ativo{background:var(--azul);color:#fff;border-color:var(--azul)}
+.secao{font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;
+  letter-spacing:0.5px;margin:14px 0 7px}
+.srv-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--borda)}
+.srv-item:last-child{border-bottom:none}
+.srv-desc{flex:1}
+.srv-desc-nome{font-size:14px;font-weight:600}
+.srv-desc-sub{font-size:11px;color:var(--cinza);margin-top:1px}
+.srv-val-txt{font-size:14px;font-weight:700;min-width:80px;text-align:right}
+.srv-del{background:var(--vermelho-bg);border:none;color:var(--vermelho);
+  border-radius:6px;padding:4px 10px;cursor:pointer;font-size:13px;font-weight:700;flex-shrink:0}
+.total-line{display:flex;justify-content:space-between;align-items:center;
+  padding:12px 16px;background:#f8fafc;border-top:2px solid var(--borda)}
+.hist{padding:9px 0;border-bottom:1px solid var(--borda);font-size:13px}
+.hist:last-child{border-bottom:none}
+.info-box{padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:12px;line-height:1.5}
+.info-azul{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+
+/* ── Modal OS ── */
+.modal-os-bg{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;
+  display:none;align-items:flex-end;justify-content:center}
+.modal-os-bg.show{display:flex}
+.modal-os{background:#fff;border-radius:20px 20px 0 0;width:100%;
+  max-height:92vh;overflow-y:auto;padding:16px 20px 36px}
+.modal-drag{width:36px;height:4px;background:#d1d5db;border-radius:2px;margin:0 auto 14px}
+
+/* ── Misc ── */
+.loading{text-align:center;padding:36px;color:var(--cinza)}
+.spin{width:28px;height:28px;border:3px solid var(--borda);border-top-color:var(--azul);
+  border-radius:50%;animation:sp 0.7s linear infinite;margin:0 auto 10px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.vazio{text-align:center;padding:36px;color:var(--cinza);font-size:14px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:#1f2937;color:#fff;padding:12px 20px;border-radius:10px;
+  font-size:14px;z-index:999;opacity:0;transition:opacity 0.25s;
+  max-width:90%;text-align:center;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     PÁGINA PÚBLICA — Consulta de OS
+═════════════════════════════════════════════ -->
+<div id="pg-publico">
+  <div class="topo-pub">
+    <div class="topo-logo">TechTV</div>
+    <div class="topo-sub">Assistência Técnica de Televisores</div>
+    <button class="btn-tecnico" onclick="abrirLoginTecnico()">
+      Acesso técnico →
+    </button>
+  </div>
+
+  <div class="consulta-wrap">
+    <div class="consulta-card">
+      <div class="consulta-titulo">Consulte sua Ordem de Serviço</div>
+
+      <!-- Tabs número / nome -->
+      <div class="tabs-busca">
+        <div class="tab-busca ativo" onclick="mudarTabBusca('numero', this)">
+          Por número da OS
+        </div>
+        <div class="tab-busca" onclick="mudarTabBusca('nome', this)">
+          Por nome do cliente
+        </div>
+      </div>
+
+      <!-- Busca por número -->
+      <div id="busca-numero">
+        <div class="campo">
+          <label>Número da OS</label>
+          <input type="number" id="c-num" placeholder="Ex: 1001"
+            style="font-size:22px;text-align:center;padding:14px"
+            onkeydown="if(event.key==='Enter') consultarPorNumero()">
+        </div>
+        <button class="btn btn-azul" onclick="consultarPorNumero()">Consultar</button>
+      </div>
+
+      <!-- Busca por nome -->
+      <div id="busca-nome" style="display:none">
+        <div class="campo">
+          <label>Nome completo do cliente</label>
+          <input type="text" id="c-nome" placeholder="Ex: João Silva"
+            onkeydown="if(event.key==='Enter') consultarPorNome()">
+        </div>
+        <button class="btn btn-azul" onclick="consultarPorNome()">Buscar</button>
+      </div>
+    </div>
+
+    <div id="resultado-pub"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     MODAL LOGIN TÉCNICO
+═════════════════════════════════════════════ -->
+<div class="modal-bg" id="modal-login" onclick="fecharLoginSeForaBg(event)">
+  <div class="modal-login">
+    <div class="modal-logo">TechTV</div>
+    <div class="modal-sub">Acesso para técnicos e administradores</div>
+    <div class="campo">
+      <label>E-mail</label>
+      <input type="email" id="l-email" placeholder="seu@email.com" autocomplete="email">
+    </div>
+    <div class="campo">
+      <label>Senha</label>
+      <input type="password" id="l-senha" placeholder="••••••••"
+        onkeydown="if(event.key==='Enter') login()">
+    </div>
+    <button class="btn btn-azul" onclick="login()">Entrar</button>
+    <button class="btn btn-cinza" style="margin-top:10px" onclick="fecharLoginModal()">Cancelar</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     APP TÉCNICO (após login)
+═════════════════════════════════════════════ -->
+<div id="pg-app" style="display:none">
+  <div class="header">
+    <div>
+      <div class="header-title">TechTV</div>
+      <div class="header-sub" id="h-usuario"></div>
+    </div>
+    <button class="btn-sair" onclick="sair()">Sair</button>
+  </div>
+  <nav class="nav">
+    <button class="nav-btn ativo" onclick="aba('dashboard',this)">Dashboard</button>
+    <button class="nav-btn" onclick="aba('ordens',this)">Ordens</button>
+    <button class="nav-btn" onclick="aba('buscar',this)">Buscar</button>
+  </nav>
+
+  <div id="tela-dashboard" class="tela ativa">
+    <div id="d-metricas" class="metricas">
+      <div class="metrica"><div class="spin"></div></div>
+    </div>
+    <div class="secao">Últimas OS</div>
+    <div id="d-lista"></div>
+  </div>
+
+  <div id="tela-ordens" class="tela">
+    <div class="filtros">
+      <button class="filtro ativo" onclick="filtrar('',this)">Todas</button>
+      <button class="filtro" onclick="filtrar('Aberta',this)">Abertas</button>
+      <button class="filtro" onclick="filtrar('Em andamento',this)">Andamento</button>
+      <button class="filtro" onclick="filtrar('Pronto',this)">Prontas</button>
+      <button class="filtro" onclick="filtrar('Entregue',this)">Entregues</button>
+    </div>
+    <div id="o-lista"></div>
+  </div>
+
+  <div id="tela-buscar" class="tela">
+    <div class="campo">
+      <input type="search" id="b-campo" placeholder="Cliente, nº OS ou modelo..."
+        oninput="buscarTecnico(this.value)" autocomplete="off">
+    </div>
+    <div id="b-lista"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     MODAL DETALHE / EDIÇÃO OS (técnico)
+═════════════════════════════════════════════ -->
+<div class="modal-os-bg" id="modal-os" onclick="fecharOsSeForaBg(event)">
+  <div class="modal-os">
+    <div class="modal-drag"></div>
+    <div id="modal-os-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = window.location.origin;
+let TOKEN = localStorage.getItem('tv_tok') || '';
+let USER  = JSON.parse(localStorage.getItem('tv_usr') || 'null');
+let filtroAtual = '';
+let osEditando = null;
+let servicosEdit = [];
+
+// ── Init ───────────────────────────────────────────────────────────────────────
+if (TOKEN && USER) { mostrarApp(); carregarDashboard(); }
+
+// ── Tabs busca pública ─────────────────────────────────────────────────────────
+function mudarTabBusca(tipo, btn) {
+  document.querySelectorAll('.tab-busca').forEach(b => b.classList.remove('ativo'));
+  btn.classList.add('ativo');
+  document.getElementById('busca-numero').style.display = tipo === 'numero' ? 'block' : 'none';
+  document.getElementById('busca-nome').style.display   = tipo === 'nome'   ? 'block' : 'none';
+  document.getElementById('resultado-pub').innerHTML = '';
+}
+
+// ── Consulta pública por número ────────────────────────────────────────────────
+async function consultarPorNumero() {
+  const num = document.getElementById('c-num').value.trim();
+  if (!num) { toast('Digite o número da OS'); return; }
+  const div = document.getElementById('resultado-pub');
+  div.innerHTML = '<div class="loading"><div class="spin"></div>Buscando...</div>';
+  try {
+    const o = await fetch(`${API}/os/consulta/${num}`).then(r => {
+      if (!r.ok) throw new Error('não encontrada');
+      return r.json();
+    });
+    div.innerHTML = renderResultadoPublico(o);
+  } catch(e) {
+    div.innerHTML = `<div class="card"><div class="card-body" style="text-align:center;color:var(--vermelho)">
+      OS #${num} não encontrada. Verifique o número.</div></div>`;
+  }
+}
+
+// ── Consulta pública por nome ──────────────────────────────────────────────────
+async function consultarPorNome() {
+  const nome = document.getElementById('c-nome').value.trim();
+  if (!nome || nome.length < 3) { toast('Digite ao menos 3 letras do nome'); return; }
+  const div = document.getElementById('resultado-pub');
+  div.innerHTML = '<div class="loading"><div class="spin"></div>Buscando...</div>';
+  try {
+    const lista = await fetch(`${API}/os/consulta-nome/${encodeURIComponent(nome)}`).then(r => {
+      if (!r.ok) throw new Error('erro');
+      return r.json();
+    });
+    if (!lista.length) {
+      div.innerHTML = `<div class="card"><div class="card-body" style="text-align:center;color:var(--cinza)">
+        Nenhuma OS encontrada para "${nome}".</div></div>`;
+      return;
+    }
+    if (lista.length === 1) {
+      div.innerHTML = renderResultadoPublico(lista[0]);
+    } else {
+      div.innerHTML = lista.map(o => `
+        <div class="os-card" onclick="abrirOsPublico(${o.num})">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span class="os-num">OS #${o.num}</span>
+            <span class="badge ${bc(o.status)}">${o.status}</span>
+          </div>
+          <div class="os-cliente">${o.cliente_nome}</div>
+          <div class="os-apar">${o.aparelho||''}</div>
+          <div class="os-footer">
+            <span style="font-size:11px;color:var(--cinza)">${o.data_entrada||''}</span>
+          </div>
+        </div>`).join('');
+    }
+  } catch(e) {
+    div.innerHTML = `<div class="card"><div class="card-body" style="text-align:center;color:var(--vermelho)">
+      Erro ao buscar. Tente novamente.</div></div>`;
+  }
+}
+
+async function abrirOsPublico(num) {
+  const div = document.getElementById('resultado-pub');
+  div.innerHTML = '<div class="loading"><div class="spin"></div>Carregando...</div>';
+  try {
+    const o = await fetch(`${API}/os/consulta/${num}`).then(r => r.json());
+    div.innerHTML = renderResultadoPublico(o);
+  } catch(e) {}
+}
+
+function renderResultadoPublico(o) {
+  const emojis = {'Aberta':'🔧','Em andamento':'⚙️','Pronto':'✅','Entregue':'📦'};
+  const cores  = {'Aberta':'#dbeafe','Em andamento':'#fef3c7','Pronto':'#d1fae5','Entregue':'#f3f4f6'};
+  const servicos = o.servicos || [];
+  const total = o.total || 0;
+
+  let srvHtml = '';
+  if (servicos.length) {
+    srvHtml = `
+      <div class="card">
+        <div class="card-head">Serviços / Peças</div>
+        <div class="card-body">
+          ${servicos.map(s => `
+            <div class="srv-linha">
+              <span>${s.desc} <span style="color:var(--cinza);font-size:12px">×${s.qtd}</span></span>
+              <span style="font-weight:600">R$ ${fmt(s.qtd * s.val)}</span>
+            </div>`).join('')}
+          <div class="srv-total">
+            <span>Total</span>
+            <span>R$ ${fmt(total)}</span>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  return `
+    <div class="card">
+      <div class="status-box" style="background:${cores[o.status]||'#f3f4f6'}">
+        <div class="status-emoji">${emojis[o.status]||'🔧'}</div>
+        <div class="status-nome">${o.status}</div>
+        <div class="status-num">OS #${o.num}</div>
+      </div>
+      <div class="card-body">
+        <div class="detalhe-row"><span class="detalhe-lbl">Cliente</span><span class="detalhe-val">${o.cliente_nome}</span></div>
+        <div class="detalhe-row"><span class="detalhe-lbl">Aparelho</span><span class="detalhe-val">${o.aparelho||'—'}</span></div>
+        <div class="detalhe-row"><span class="detalhe-lbl">Defeito</span><span class="detalhe-val">${o.defeito||'—'}</span></div>
+        <div class="detalhe-row"><span class="detalhe-lbl">Entrada</span><span class="detalhe-val">${o.data_entrada||'—'}</span></div>
+        <div class="detalhe-row"><span class="detalhe-lbl">Prazo</span><span class="detalhe-val">${o.prazo||'—'}</span></div>
+        <div class="detalhe-row"><span class="detalhe-lbl">Técnico</span><span class="detalhe-val">${o.tecnico||'—'}</span></div>
+        ${o.data_entrega?`<div class="detalhe-row"><span class="detalhe-lbl">Entregue em</span><span class="detalhe-val">${o.data_entrega}</span></div>`:''}
+      </div>
+    </div>
+    ${srvHtml}
+    <button class="btn btn-cinza" style="margin-top:4px" onclick="document.getElementById('resultado-pub').innerHTML='';document.getElementById('c-num').value='';document.getElementById('c-nome').value=''">
+      Nova consulta
+    </button>`;
+}
+
+// ── Login técnico ──────────────────────────────────────────────────────────────
+function abrirLoginTecnico() {
+  document.getElementById('modal-login').classList.add('show');
+  setTimeout(() => document.getElementById('l-email').focus(), 100);
+}
+function fecharLoginModal() {
+  document.getElementById('modal-login').classList.remove('show');
+}
+function fecharLoginSeForaBg(e) {
+  if (e.target.id === 'modal-login') fecharLoginModal();
+}
+
+async function login() {
+  const email = document.getElementById('l-email').value.trim();
+  const senha = document.getElementById('l-senha').value;
+  if (!email || !senha) { toast('Preencha e-mail e senha'); return; }
+  try {
+    const r = await req('/auth/login', 'POST', {email, senha});
+    TOKEN = r.token;
+    USER  = {nome: r.nome, perfil: r.perfil};
+    localStorage.setItem('tv_tok', TOKEN);
+    localStorage.setItem('tv_usr', JSON.stringify(USER));
+    fecharLoginModal();
+    mostrarApp();
+    carregarDashboard();
+  } catch(e) { toast(e.message || 'E-mail ou senha incorretos'); }
+}
+
+function sair() {
+  TOKEN = ''; USER = null;
+  localStorage.removeItem('tv_tok');
+  localStorage.removeItem('tv_usr');
+  hide('pg-app'); show('pg-publico');
+}
+
+function mostrarApp() {
+  hide('pg-publico'); show('pg-app');
+  if (USER) document.getElementById('h-usuario').textContent =
+    USER.nome + ' · ' + (USER.perfil === 'admin' ? 'Admin' : 'Técnico');
+}
+
+// ── App técnico — navegação ────────────────────────────────────────────────────
+function aba(nome, btn) {
+  document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('ativo'));
+  document.getElementById('tela-' + nome).classList.add('ativa');
+  btn.classList.add('ativo');
+  if (nome === 'dashboard') carregarDashboard();
+  if (nome === 'ordens')    carregarOrdens(filtroAtual);
+}
+
+// ── Dashboard ──────────────────────────────────────────────────────────────────
+async function carregarDashboard() {
+  try {
+    const d = await req('/dashboard');
+    document.getElementById('d-metricas').innerHTML = `
+      <div class="metrica"><div class="metrica-val">${d.total}</div><div class="metrica-lbl">Total OS</div></div>
+      <div class="metrica m-azul"><div class="metrica-val">${d.abertas}</div><div class="metrica-lbl">Abertas</div></div>
+      <div class="metrica m-am"><div class="metrica-val">${d.andamento}</div><div class="metrica-lbl">Andamento</div></div>
+      <div class="metrica m-verde"><div class="metrica-val">${d.prontas}</div><div class="metrica-lbl">Prontas</div></div>`;
+    document.getElementById('d-lista').innerHTML = d.ultimas.length
+      ? d.ultimas.map(o => osCardHtml(o)).join('')
+      : '<div class="vazio">Nenhuma OS ainda</div>';
+  } catch(e) { toast('Erro ao carregar dashboard'); }
+}
+
+// ── Ordens ─────────────────────────────────────────────────────────────────────
+async function carregarOrdens(status = '') {
+  const el = document.getElementById('o-lista');
+  el.innerHTML = '<div class="loading"><div class="spin"></div>Carregando...</div>';
+  try {
+    let url = '/os';
+    if (status) url += '?status=' + encodeURIComponent(status);
+    const lista = await req(url);
+    el.innerHTML = lista.length ? lista.map(o => osCardHtml(o)).join('') : '<div class="vazio">Nenhuma OS</div>';
+  } catch(e) { el.innerHTML = '<div class="vazio">Erro ao carregar</div>'; }
+}
+
+function filtrar(status, btn) {
+  document.querySelectorAll('.filtro').forEach(b => b.classList.remove('ativo'));
+  btn.classList.add('ativo');
+  filtroAtual = status;
+  carregarOrdens(status);
+}
+
+async function buscarTecnico(termo) {
+  if (!termo || termo.length < 2) { document.getElementById('b-lista').innerHTML = ''; return; }
+  try {
+    const r = await req('/os?busca=' + encodeURIComponent(termo));
+    document.getElementById('b-lista').innerHTML = r.length
+      ? r.map(o => osCardHtml(o)).join('')
+      : '<div class="vazio">Sem resultados</div>';
+  } catch(e) {}
+}
+
+function osCardHtml(o) {
+  return `<div class="os-card" onclick="abrirOS(${o.num})">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span class="os-num">OS #${o.num}</span>
+      <span class="badge ${bc(o.status)}">${o.status}</span>
+    </div>
+    <div class="os-cliente">${o.cliente}</div>
+    <div class="os-apar">${o.aparelho||''}</div>
+    <div class="os-footer">
+      <span style="font-size:11px;color:var(--cinza)">${o.data_entrada||''}</span>
+      <span style="font-size:14px;font-weight:700">R$ ${fmt(o.total)}</span>
+    </div>
+  </div>`;
+}
+
+// ── Detalhe OS técnico ─────────────────────────────────────────────────────────
+async function abrirOS(num) {
+  document.getElementById('modal-os-body').innerHTML =
+    '<div class="loading"><div class="spin"></div>Carregando...</div>';
+  document.getElementById('modal-os').classList.add('show');
+  try {
+    const o = await req('/os/' + num);
+    osEditando = o;
+    servicosEdit = JSON.parse(JSON.stringify(o.servicos || []));
+    renderModalOS(o);
+  } catch(e) {
+    document.getElementById('modal-os-body').innerHTML = '<div class="vazio">Erro ao carregar</div>';
+  }
+}
+
+function renderModalOS(o) {
+  const cli = o.cliente || {}; const tv = o.tv || {};
+  const hist = (o.historico || []).slice(-4).reverse();
+  const cores = {'Aberta':'#dbeafe','Em andamento':'#fef3c7','Pronto':'#d1fae5','Entregue':'#f3f4f6'};
+
+  document.getElementById('modal-os-body').innerHTML = `
+    <div style="background:${cores[o.status]||'#f3f4f6'};border-radius:10px;
+      text-align:center;padding:18px;margin-bottom:14px">
+      <div style="font-size:20px;font-weight:800">${o.status}</div>
+      <div style="font-size:12px;opacity:0.7;margin-top:2px">OS #${o.num} · ${o.data_entrada||''}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">Cliente</div>
+      <div class="card-body">
+        <div class="detalhe-row"><span class="detalhe-lbl">Nome</span><span class="detalhe-val">${cli.nome||'—'}</span></div>
+        <div class="detalhe-row"><span class="detalhe-lbl">Telefone</span><span class="detalhe-val">${cli.tel||'—'}</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">Aparelho</div>
+      <div class="card-body">
+        <div class="detalhe-row"><span class="detalhe-lbl">Marca/Modelo</span><span class="detalhe-val">${tv.marca||''} ${tv.modelo||''}</span></div>
+        <div class="detalhe-row"><span class="detalhe-lbl">Defeito</span><span class="detalhe-val">${o.defeito||'—'}</span></div>
+        <div class="detalhe-row"><span class="detalhe-lbl">Técnico</span><span class="detalhe-val">${o.tecnico||'—'}</span></div>
+        <div class="detalhe-row"><span class="detalhe-lbl">Prazo</span><span class="detalhe-val">${o.prazo||'—'}</span></div>
+      </div>
+    </div>
+
+    <!-- Peças e valores -->
+    <div class="secao">Peças e Mão de Obra</div>
+    <div class="info-box info-azul">Adicione, edite ou remova itens e salve ao final.</div>
+    <div class="card">
+      <div class="card-body" id="srv-lista-edit"></div>
+      <div class="total-line">
+        <span style="font-size:13px;font-weight:600;color:var(--cinza)">Total</span>
+        <span style="font-size:18px;font-weight:800" id="srv-total-edit">R$ ${fmt(o.total)}</span>
+      </div>
+    </div>
+
+    <!-- Adicionar item -->
+    <div class="card">
+      <div class="card-head">Adicionar item</div>
+      <div class="card-body">
+        <div class="campo"><label>Descrição</label>
+          <input id="add-desc" placeholder="Ex: Placa principal, Mão de obra...">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="campo"><label>Qtd</label>
+            <input type="number" id="add-qtd" value="1" min="1" step="1">
+          </div>
+          <div class="campo"><label>Valor unit. (R$)</label>
+            <input type="number" id="add-val" placeholder="0,00" min="0" step="0.01">
+          </div>
+        </div>
+        <button class="btn btn-verde btn-sm" style="width:100%" onclick="addServico()">+ Adicionar</button>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div class="secao">Alterar Status</div>
+    <div class="card">
+      <div class="card-body">
+        <div class="campo"><label>Novo status</label>
+          <select id="novo-status">
+            ${['Aberta','Em andamento','Pronto','Entregue'].map(s =>
+              `<option ${s===o.status?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div class="campo"><label>Observação (opcional)</label>
+          <input id="obs-status" placeholder="Ex: Aguardando peça...">
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-azul" onclick="salvarEdicao(${o.num})">Salvar alterações</button>
+    <button class="btn btn-cinza" style="margin-top:10px" onclick="fecharModalOs()">Fechar</button>
+
+    ${hist.length ? `
+    <div class="secao">Histórico</div>
+    <div class="card"><div class="card-body">
+      ${hist.map(h=>`<div class="hist">
+        <b>${h.de}</b> → <b>${h.para}</b>
+        <div style="font-size:11px;color:var(--cinza)">${h.por} · ${h.em}</div>
+        ${h.obs?`<div style="font-size:12px;color:var(--cinza);margin-top:2px">${h.obs}</div>`:''}
+      </div>`).join('')}
+    </div></div>` : ''}
+  `;
+  renderServicosEdit();
+}
+
+function renderServicosEdit() {
+  const el = document.getElementById('srv-lista-edit');
+  if (!el) return;
+  if (!servicosEdit.length) {
+    el.innerHTML = '<div style="color:var(--cinza);font-size:13px;text-align:center;padding:8px">Nenhum item</div>';
+  } else {
+    el.innerHTML = servicosEdit.map((s, i) => `
+      <div class="srv-item">
+        <div class="srv-desc">
+          <div class="srv-desc-nome">${s.desc}</div>
+          <div class="srv-desc-sub">Qtd: ${s.qtd} × R$ ${fmt(s.val)}</div>
+        </div>
+        <div class="srv-val-txt">R$ ${fmt(s.qtd * s.val)}</div>
+        <button class="srv-del" onclick="remServico(${i})">✕</button>
+      </div>`).join('');
+  }
+  const total = servicosEdit.reduce((a, s) => a + s.qtd * s.val, 0);
+  const el2 = document.getElementById('srv-total-edit');
+  if (el2) el2.textContent = 'R$ ' + fmt(total);
+}
+
+function addServico() {
+  const desc = document.getElementById('add-desc').value.trim();
+  const qtd  = parseFloat(document.getElementById('add-qtd').value) || 1;
+  const val  = parseFloat(document.getElementById('add-val').value) || 0;
+  if (!desc) { toast('Informe a descrição'); return; }
+  servicosEdit.push({desc, qtd, val});
+  document.getElementById('add-desc').value = '';
+  document.getElementById('add-val').value  = '';
+  document.getElementById('add-qtd').value  = '1';
+  renderServicosEdit();
+}
+
+function remServico(idx) {
+  servicosEdit.splice(idx, 1);
+  renderServicosEdit();
+}
+
+async function salvarEdicao(num) {
+  const status = document.getElementById('novo-status').value;
+  const obs    = document.getElementById('obs-status').value;
+  try {
+    await req('/os/' + num + '/editar', 'PATCH', {servicos: servicosEdit, status, observacao: obs});
+    toast('OS atualizada!');
+    fecharModalOs();
+    carregarDashboard();
+    carregarOrdens(filtroAtual);
+  } catch(e) { toast('Erro ao salvar: ' + (e.message||'')); }
+}
+
+function fecharModalOs()      { document.getElementById('modal-os').classList.remove('show'); }
+function fecharOsSeForaBg(e)  { if (e.target.id === 'modal-os') fecharModalOs(); }
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+async function req(path, method = 'GET', body = null) {
+  const opts = {method, headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN}};
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(API + path, opts);
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.detail || 'Erro');
+  return d;
+}
+function bc(s) {
+  return {'Aberta':'b-aberta','Em andamento':'b-andamento','Pronto':'b-pronto','Entregue':'b-entregue'}[s]||'b-entregue';
+}
+function fmt(v) { return (parseFloat(v)||0).toFixed(2).replace('.',','); }
+function show(id) { document.getElementById(id).style.display = 'block'; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+function toast(msg, d=3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), d);
+}
+</script>
+</body>
+</html>
