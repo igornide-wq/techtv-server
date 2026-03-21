@@ -269,18 +269,41 @@ def editar_os(numero: int, req: EdicaoOS, usuario=Depends(verificar_token)):
             "obs": req.observacao or "Editado pelo app mobile"
         })
     _save_ordem(o)
-    # WhatsApp automático quando ficar Pronto
+    import urllib.parse
     wpp_link = ""
-    if req.status == "Pronto":
-        cli = o.get("cliente", {})
-        tel = cli.get("tel", "").replace(" ","").replace("-","").replace("(","").replace(")","")
-        if tel:
-            if tel.startswith("0"): tel = "55" + tel[1:]
-            elif not tel.startswith("55"): tel = "55" + tel
-            nome = cli.get("nome", "cliente")
-            msg = f"Olá {nome}! Sua TV (OS #{o['num']}) está pronta para retirada. Entre em contato para agendar. 😊"
-            import urllib.parse
-            wpp_link = f"https://wa.me/{tel}?text={urllib.parse.quote(msg)}"
+    cli = o.get("cliente", {})
+    tel = cli.get("tel", "").replace(" ","").replace("-","").replace("(","").replace(")","")
+    if tel:
+        if tel.startswith("0"): tel = "55" + tel[1:]
+        elif not tel.startswith("55"): tel = "55" + tel
+        nome = cli.get("nome", "cliente")
+        tv   = o.get("tv", {})
+        aparelho = (tv.get("marca","") + " " + tv.get("modelo","")).strip()
+        servicos = o.get("servicos", [])
+        total    = o.get("total", 0)
+        palavras_mo = ["mao de obra","mão de obra","servico","serviço","diagnostico","diagnóstico","visita","reparo","conserto","instalacao","instalação"]
+
+        if req.status == "Orcamento":
+            mao_obra  = [s for s in servicos if any(p in s.get("desc","").lower() for p in palavras_mo)]
+            materiais = [s for s in servicos if not any(p in s.get("desc","").lower() for p in palavras_mo)]
+            linhas = ["Ola " + nome + "! Segue orcamento para sua TV " + aparelho + " OS #" + str(o["num"]) + ":"]
+            if mao_obra:
+                linhas.append("*Mao de obra:*")
+                for s in mao_obra:
+                    linhas.append("  - " + s.get("desc","") + " R$ " + f"{s.get('qtd',1)*s.get('val',0):.2f}")
+            if materiais:
+                linhas.append("*Materiais/Pecas:*")
+                for s in materiais:
+                    linhas.append("  - " + s.get("desc","") + " x" + str(s.get("qtd",1)) + " R$ " + f"{s.get('qtd',1)*s.get('val',0):.2f}")
+            linhas.append("*Total: R$ " + f"{total:.2f}" + "*")
+            linhas.append("Aguardamos sua aprovacao para prosseguir.")
+            msg = "%0A".join(linhas)
+            wpp_link = "https://wa.me/" + tel + "?text=" + urllib.parse.quote("\n".join(linhas))
+
+        elif req.status == "Pronto":
+            msg = "Ola " + nome + "! Sua TV " + aparelho + " OS #" + str(o["num"]) + " esta pronta para retirada! Entre em contato. 😊"
+            wpp_link = "https://wa.me/" + tel + "?text=" + urllib.parse.quote(msg)
+
     return {"ok": True, "total": o["total"], "status": o.get("status"), "wpp_link": wpp_link}
 
 @app.get("/dashboard")
