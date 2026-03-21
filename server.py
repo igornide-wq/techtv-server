@@ -57,19 +57,6 @@ def init_db():
 
 
 
-@app.get("/reset-admin")
-def reset_admin():
-    """Reseta a senha do admin para admin123. Remova após usar."""
-    conn = get_db()
-    # Deletar e recriar admin
-    conn.execute("DELETE FROM usuarios WHERE email='admin@techtv.com'")
-    conn.execute(
-        "INSERT INTO usuarios (nome, email, senha_hash, perfil) VALUES (?,?,?,?)",
-        ("Admin", "admin@techtv.com", _hash("admin123"), "admin")
-    )
-    conn.commit()
-    conn.close()
-    return {"ok": True, "msg": "Admin resetado. Email: admin@techtv.com | Senha: admin123"}
 
 # ── Auth ───────────────────────────────────────────────────────────────────────
 def verificar_token(authorization: str = Header(None)):
@@ -282,7 +269,19 @@ def editar_os(numero: int, req: EdicaoOS, usuario=Depends(verificar_token)):
             "obs": req.observacao or "Editado pelo app mobile"
         })
     _save_ordem(o)
-    return {"ok": True, "total": o["total"], "status": o.get("status")}
+    # WhatsApp automático quando ficar Pronto
+    wpp_link = ""
+    if req.status == "Pronto":
+        cli = o.get("cliente", {})
+        tel = cli.get("tel", "").replace(" ","").replace("-","").replace("(","").replace(")","")
+        if tel:
+            if tel.startswith("0"): tel = "55" + tel[1:]
+            elif not tel.startswith("55"): tel = "55" + tel
+            nome = cli.get("nome", "cliente")
+            msg = f"Olá {nome}! Sua TV (OS #{o['num']}) está pronta para retirada. Entre em contato para agendar. 😊"
+            import urllib.parse
+            wpp_link = f"https://wa.me/{tel}?text={urllib.parse.quote(msg)}"
+    return {"ok": True, "total": o["total"], "status": o.get("status"), "wpp_link": wpp_link}
 
 @app.get("/dashboard")
 def dashboard(usuario=Depends(verificar_token)):
