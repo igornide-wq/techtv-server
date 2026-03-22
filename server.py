@@ -65,6 +65,8 @@ def init_db():
 
 
 # ── Auth ───────────────────────────────────────────────────────────────────────
+init_db()
+
 def verificar_token(authorization: str = Header(None)):
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(401, "Token necessário")
