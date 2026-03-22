@@ -215,6 +215,32 @@ def aprovar_orcamento(numero: int, req: AprovacaoOrcamento):
     _save_ordem(o)
     return {"ok": True, "orcamento_status": o["orcamento_status"]}
 
+
+class NovaOSWeb(BaseModel):
+    cliente: dict
+    tv: dict
+    defeito: Optional[str] = ""
+    checklist: Optional[dict] = {}
+    servicos: Optional[List[dict]] = []
+    total: Optional[float] = 0
+    tecnico: Optional[str] = ""
+    prazo: Optional[str] = ""
+    status: Optional[str] = "Aberta"
+
+@app.post("/os/nova")
+def criar_os_web(os_data: NovaOSWeb, usuario=Depends(verificar_token)):
+    conn = get_db()
+    cur = conn.execute("SELECT MAX(num) as mx FROM ordens").fetchone()
+    prox_num = (cur["mx"] or 1000) + 1
+    conn.close()
+    o = os_data.dict()
+    o["num"] = prox_num
+    o["data_entrada"] = datetime.now().strftime("%d/%m/%Y %H:%M")
+    o["status"] = "Aberta"
+    o["historico"] = []
+    _save_ordem(o)
+    return {"ok": True, "num": prox_num}
+
 # ── Rotas autenticadas ─────────────────────────────────────────────────────────
 @app.get("/os")
 def listar_ordens(status: Optional[str] = None, busca: Optional[str] = None,
