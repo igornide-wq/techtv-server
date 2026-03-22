@@ -5,827 +5,655 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#2563eb">
-<title>TechTV — Assistência Técnica</title>
+<title>TechTV</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{
-  --azul:#2563eb;--azul-esc:#1d4ed8;--verde:#166534;--verde-bg:#f0fdf4;
-  --amarelo:#92400e;--amarelo-bg:#fffbeb;--cinza:#6b7280;
-  --vermelho:#b91c1c;--vermelho-bg:#fef2f2;
-  --borda:#e5e7eb;--fundo:#f3f4f6;--branco:#fff;--texto:#111827;
-}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  background:var(--fundo);color:var(--texto);min-height:100vh;max-width:480px;margin:0 auto}
-.topo-pub{background:var(--azul);padding:28px 24px 24px;color:#fff;text-align:center}
+:root{--azul:#2563eb;--azul-esc:#1d4ed8;--verde:#166534;--verde-bg:#f0fdf4;--amarelo:#92400e;--cinza:#6b7280;--vermelho:#b91c1c;--vermelho-bg:#fef2f2;--borda:#e5e7eb;--fundo:#f3f4f6;--texto:#111827}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--fundo);color:var(--texto);min-height:100vh;max-width:480px;margin:0 auto}
+.topo{background:var(--azul);padding:28px 24px 24px;color:#fff;text-align:center}
 .topo-logo{font-size:30px;font-weight:900}
 .topo-sub{font-size:13px;opacity:0.8;margin-top:3px}
-.btn-tecnico{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.35);
-  color:#fff;border-radius:8px;padding:7px 16px;font-size:12px;cursor:pointer;
-  font-weight:600;margin-top:14px;display:inline-block}
-.consulta-wrap{padding:20px}
-.consulta-card{background:#fff;border-radius:14px;border:1px solid var(--borda);padding:20px;margin-bottom:16px}
-.consulta-titulo{font-size:15px;font-weight:700;margin-bottom:14px}
-.tabs-busca{display:flex;gap:6px;margin-bottom:14px}
-.tab-busca{flex:1;padding:9px;border:1.5px solid var(--borda);border-radius:8px;
-  background:#fff;font-size:13px;font-weight:600;color:var(--cinza);cursor:pointer;text-align:center}
-.tab-busca.ativo{background:var(--azul);color:#fff;border-color:var(--azul)}
-input,select,textarea{width:100%;background:#fff;border:1.5px solid var(--borda);
-  border-radius:10px;padding:12px 14px;font-size:15px;color:var(--texto);outline:none;-webkit-appearance:none}
-input:focus,select:focus{border-color:var(--azul)}
+.btn-tec{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.35);color:#fff;border-radius:8px;padding:7px 16px;font-size:12px;cursor:pointer;font-weight:600;margin-top:14px;display:inline-block}
+.wrap{padding:20px}
+.ccard{background:#fff;border-radius:14px;border:1px solid var(--borda);padding:20px;margin-bottom:16px}
+.ctit{font-size:15px;font-weight:700;margin-bottom:14px}
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tab{flex:1;padding:9px;border:1.5px solid var(--borda);border-radius:8px;background:#fff;font-size:13px;font-weight:600;color:var(--cinza);cursor:pointer;text-align:center}
+.tab.on{background:var(--azul);color:#fff;border-color:var(--azul)}
+input,select,textarea{width:100%;background:#fff;border:1.5px solid var(--borda);border-radius:10px;padding:12px 14px;font-size:15px;color:var(--texto);outline:none;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--azul)}
 .campo{margin-bottom:12px}
 .campo label{display:block;font-size:11px;font-weight:700;color:var(--cinza);margin-bottom:5px;text-transform:uppercase}
-.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer}
-.btn-azul{background:var(--azul);color:#fff}
-.btn-cinza{background:#f3f4f6;color:#374151;border:1.5px solid var(--borda)}
-.btn-verde{background:var(--verde-bg);color:var(--verde);border:1.5px solid #86efac}
-.btn-verm{background:var(--vermelho-bg);color:var(--vermelho);border:1.5px solid #fca5a5}
-.btn-sm{padding:8px 14px;font-size:13px;width:auto;border-radius:8px;font-weight:600}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px}
+.btn-az{background:var(--azul);color:#fff}
+.btn-cz{background:#f3f4f6;color:#374151;border:1.5px solid var(--borda)}
+.btn-vd{background:var(--verde-bg);color:var(--verde);border:1.5px solid #86efac}
+.btn-vm{background:var(--vermelho-bg);color:var(--vermelho);border:1.5px solid #fca5a5}
+.btn-sm{padding:8px 14px;font-size:13px;width:auto;border-radius:8px;font-weight:600;border:none;cursor:pointer}
 .badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700}
-.b-aberta{background:#dbeafe;color:#1d4ed8}
-.b-andamento{background:#fef3c7;color:#92400e}
-.b-orc{background:#fef9c3;color:#854d0e}
-.b-pronto{background:#d1fae5;color:#065f46}
-.b-entregue{background:#f3f4f6;color:#374151}
-.os-card{background:#fff;border-radius:12px;border:1px solid var(--borda);
-  padding:14px 16px;margin-bottom:10px;cursor:pointer}
-.os-num{font-size:12px;font-weight:700;color:var(--azul)}
-.os-cliente{font-size:15px;font-weight:600;margin:3px 0 2px}
-.os-apar{font-size:12px;color:var(--cinza)}
-.os-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.b-ab{background:#dbeafe;color:#1d4ed8}.b-an{background:#fef3c7;color:#92400e}
+.b-or{background:#fef9c3;color:#854d0e}.b-pr{background:#d1fae5;color:#065f46}
+.b-en{background:#f3f4f6;color:#374151}
+.oscard{background:#fff;border-radius:12px;border:1px solid var(--borda);padding:14px 16px;margin-bottom:10px;cursor:pointer}
+.oscard:active{opacity:0.8}
+.osnum{font-size:12px;font-weight:700;color:var(--azul)}
+.oscli{font-size:15px;font-weight:600;margin:3px 0 2px}
+.osapar{font-size:12px;color:var(--cinza)}
+.osfoot{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
 .card{background:#fff;border-radius:12px;border:1px solid var(--borda);margin-bottom:12px;overflow:hidden}
-.card-head{padding:12px 16px;border-bottom:1px solid var(--borda);display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:14px}
-.card-body{padding:14px 16px}
-.detalhe-row{display:flex;padding:9px 0;border-bottom:1px solid var(--borda)}
-.detalhe-row:last-child{border-bottom:none}
-.detalhe-lbl{font-size:11px;color:var(--cinza);min-width:100px;font-weight:600;padding-top:1px}
-.detalhe-val{font-size:14px;flex:1}
-.srv-linha{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--borda);font-size:13px}
-.srv-linha:last-child{border-bottom:none}
-.srv-total{display:flex;justify-content:space-between;padding:10px 0 0;font-weight:800;font-size:15px}
-.status-box{text-align:center;padding:24px 16px;border-radius:12px 12px 0 0}
-.status-emoji{font-size:44px}
-.status-nome{font-size:20px;font-weight:800;margin-top:6px}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;
-  display:none;align-items:center;justify-content:center;padding:20px}
-.modal-bg.show{display:flex}
-.modal-login{background:#fff;border-radius:16px;width:100%;max-width:360px;padding:28px 24px}
-.modal-logo{font-size:24px;font-weight:900;color:var(--azul);text-align:center;margin-bottom:4px}
-.modal-sub{text-align:center;color:var(--cinza);font-size:13px;margin-bottom:20px}
-.header{background:var(--azul);color:#fff;padding:14px 18px;display:flex;
-  align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.header-title{font-size:18px;font-weight:700}
-.header-sub{font-size:11px;opacity:0.75;margin-top:1px}
-.btn-sair{background:rgba(255,255,255,0.18);border:none;color:#fff;border-radius:8px;padding:7px 14px;font-size:13px;cursor:pointer;font-weight:600}
+.card-h{padding:12px 16px;border-bottom:1px solid var(--borda);font-weight:700;font-size:14px}
+.card-b{padding:14px 16px}
+.drow{display:flex;padding:9px 0;border-bottom:1px solid var(--borda)}
+.drow:last-child{border-bottom:none}
+.dlbl{font-size:11px;color:var(--cinza);min-width:100px;font-weight:600;padding-top:1px}
+.dval{font-size:14px;flex:1}
+.slin{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--borda);font-size:13px}
+.slin:last-child{border-bottom:none}
+.stot{display:flex;justify-content:space-between;padding:10px 0 0;font-weight:800;font-size:15px}
+.sbox{text-align:center;padding:24px 16px;border-radius:12px 12px 0 0}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-bg.on{display:flex}
+.mlogin{background:#fff;border-radius:16px;width:100%;max-width:360px;padding:28px 24px}
+.mlogo{font-size:24px;font-weight:900;color:var(--azul);text-align:center;margin-bottom:4px}
+.msub{text-align:center;color:var(--cinza);font-size:13px;margin-bottom:20px}
+.header{background:var(--azul);color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.htit{font-size:18px;font-weight:700}
+.hsub{font-size:11px;opacity:0.75;margin-top:1px}
+.bsair{background:rgba(255,255,255,0.18);border:none;color:#fff;border-radius:8px;padding:7px 14px;font-size:13px;cursor:pointer;font-weight:600}
 .nav{display:flex;background:#fff;border-bottom:2px solid var(--borda);position:sticky;top:60px;z-index:99;overflow-x:auto}
-.nav-btn{flex:1;min-width:72px;border:none;background:none;padding:12px 4px;font-size:12px;color:var(--cinza);cursor:pointer;border-bottom:3px solid transparent;font-weight:600;white-space:nowrap}
-.nav-btn.ativo{color:var(--azul);border-bottom-color:var(--azul)}
+.nbtn{flex:1;min-width:60px;border:none;background:none;padding:10px 4px;font-size:11px;color:var(--cinza);cursor:pointer;border-bottom:3px solid transparent;font-weight:600;white-space:nowrap}
+.nbtn.on{color:var(--azul);border-bottom-color:var(--azul)}
 .tela{display:none;padding:14px;padding-bottom:90px}
-.tela.ativa{display:block}
+.tela.on{display:block}
 .metricas{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .metrica{background:#fff;border-radius:12px;border:1px solid var(--borda);padding:14px;text-align:center}
-.metrica-val{font-size:26px;font-weight:800;line-height:1}
-.metrica-lbl{font-size:11px;color:var(--cinza);margin-top:3px}
-.m-azul .metrica-val{color:var(--azul)}
-.m-verde .metrica-val{color:var(--verde)}
-.m-am .metrica-val{color:var(--amarelo)}
+.mval{font-size:26px;font-weight:800;line-height:1}
+.mlbl{font-size:11px;color:var(--cinza);margin-top:3px}
+.m-az .mval{color:var(--azul)}.m-vd .mval{color:var(--verde)}.m-am .mval{color:var(--amarelo)}
 .filtros{display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px}
 .filtro{white-space:nowrap;padding:7px 14px;border-radius:999px;font-size:12px;border:1.5px solid var(--borda);background:#fff;cursor:pointer;font-weight:600}
-.filtro.ativo{background:var(--azul);color:#fff;border-color:var(--azul)}
-.secao{font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:0.5px;margin:14px 0 7px}
-.srv-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--borda)}
-.srv-item:last-child{border-bottom:none}
-.srv-desc{flex:1}
-.srv-desc-nome{font-size:14px;font-weight:600}
-.srv-desc-sub{font-size:11px;color:var(--cinza);margin-top:1px}
-.srv-val-txt{font-size:14px;font-weight:700;min-width:80px;text-align:right}
-.srv-del{background:var(--vermelho-bg);border:none;color:var(--vermelho);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:13px;font-weight:700;flex-shrink:0}
-.total-line{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f8fafc;border-top:2px solid var(--borda)}
+.filtro.on{background:var(--azul);color:#fff;border-color:var(--azul)}
+.sec{font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:0.5px;margin:14px 0 7px}
+.sitem{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--borda)}
+.sitem:last-child{border-bottom:none}
+.sdesc{flex:1}.sdnome{font-size:14px;font-weight:600}.sdsub{font-size:11px;color:var(--cinza);margin-top:1px}
+.svaltxt{font-size:14px;font-weight:700;min-width:80px;text-align:right}
+.sdel{background:var(--vermelho-bg);border:none;color:var(--vermelho);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:13px;font-weight:700;flex-shrink:0}
+.totline{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f8fafc;border-top:2px solid var(--borda)}
 .hist{padding:9px 0;border-bottom:1px solid var(--borda);font-size:13px}
 .hist:last-child{border-bottom:none}
-.info-box{padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:12px}
-.info-azul{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
-.modal-os-bg{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;align-items:flex-end;justify-content:center}
-.modal-os-bg.show{display:flex}
-.modal-os{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow-y:auto;padding:16px 20px 36px}
-.modal-drag{width:36px;height:4px;background:#d1d5db;border-radius:2px;margin:0 auto 14px}
+.ibox{padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:12px}
+.iaz{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+.modal-os{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.modal-os.on{display:flex}
+.mos{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow-y:auto;padding:16px 20px 36px}
+.drag{width:36px;height:4px;background:#d1d5db;border-radius:2px;margin:0 auto 14px}
 .loading{text-align:center;padding:36px;color:var(--cinza)}
 .spin{width:28px;height:28px;border:3px solid var(--borda);border-top-color:var(--azul);border-radius:50%;animation:sp 0.7s linear infinite;margin:0 auto 10px}
 @keyframes sp{to{transform:rotate(360deg)}}
 .vazio{text-align:center;padding:36px;color:var(--cinza);font-size:14px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;z-index:999;opacity:0;transition:opacity 0.25s;max-width:90%;text-align:center;pointer-events:none}
-.toast.show{opacity:1}
-.check-item{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid var(--borda);border-radius:8px;cursor:pointer;margin-bottom:6px;font-size:13px}
-.check-item.checked{background:#f0fdf4;border-color:#86efac;color:var(--verde)}
+.toast.on{opacity:1}
+.chk{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid var(--borda);border-radius:8px;cursor:pointer;margin-bottom:6px;font-size:13px}
+.chk.on{background:#f0fdf4;border-color:#86efac;color:var(--verde)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}
 </style>
 </head>
 <body>
 
-<!-- PÁGINA PÚBLICA -->
-<div id="pg-publico">
-  <div class="topo-pub">
+<!-- PÚBLICO -->
+<div id="pg-pub">
+  <div class="topo">
     <div class="topo-logo">TechTV</div>
     <div class="topo-sub">Assistência Técnica de Televisores</div>
-    <button class="btn-tecnico" onclick="abrirLoginTecnico()">Acesso técnico →</button>
+    <button class="btn-tec" onclick="openLogin()">Acesso técnico →</button>
   </div>
-  <div class="consulta-wrap">
-    <div class="consulta-card">
-      <div class="consulta-titulo">Consulte sua Ordem de Serviço</div>
-      <div class="tabs-busca">
-        <div class="tab-busca ativo" id="tab-num" onclick="mudarTab('numero')">Por número da OS</div>
-        <div class="tab-busca" id="tab-nome" onclick="mudarTab('nome')">Por nome do cliente</div>
+  <div class="wrap">
+    <div class="ccard">
+      <div class="ctit">Consulte sua Ordem de Serviço</div>
+      <div class="tabs">
+        <div class="tab on" id="tab-n" onclick="mudarTab('n')">Por número da OS</div>
+        <div class="tab" id="tab-nm" onclick="mudarTab('nm')">Por nome do cliente</div>
       </div>
-      <div id="busca-numero">
+      <div id="b-num">
         <div class="campo"><label>Número da OS</label>
           <input type="number" id="c-num" placeholder="Ex: 1001" style="font-size:22px;text-align:center;padding:14px">
         </div>
-        <button class="btn btn-azul" onclick="consultarPorNumero()">Consultar</button>
+        <button class="btn btn-az" onclick="consultarNum()">Consultar</button>
       </div>
-      <div id="busca-nome" style="display:none">
-        <div class="campo"><label>Nome completo do cliente</label>
+      <div id="b-nome" style="display:none">
+        <div class="campo"><label>Nome do cliente</label>
           <input type="text" id="c-nome" placeholder="Ex: João Silva">
         </div>
-        <button class="btn btn-azul" onclick="consultarPorNome()">Buscar</button>
+        <button class="btn btn-az" onclick="consultarNome()">Buscar</button>
       </div>
     </div>
-    <div id="resultado-pub"></div>
+    <div id="res-pub"></div>
   </div>
 </div>
 
-<!-- MODAL LOGIN TÉCNICO -->
-<div class="modal-bg" id="modal-login">
-  <div class="modal-login">
-    <div class="modal-logo">TechTV</div>
-    <div class="modal-sub">Acesso para técnicos e administradores</div>
-    <div class="campo"><label>E-mail</label>
-      <input type="email" id="l-email" placeholder="seu@email.com" autocomplete="email">
-    </div>
-    <div class="campo"><label>Senha</label>
-      <input type="password" id="l-senha" placeholder="••••••••">
-    </div>
-    <button class="btn btn-azul" style="margin-bottom:10px" onclick="login()">Entrar</button>
-    <button class="btn btn-cinza" onclick="fecharLoginModal()">Cancelar</button>
+<!-- MODAL LOGIN -->
+<div class="modal-bg" id="ml">
+  <div class="mlogin">
+    <div class="mlogo">TechTV</div>
+    <div class="msub">Acesso para técnicos e administradores</div>
+    <div class="campo"><label>E-mail</label><input type="email" id="l-email" placeholder="seu@email.com"></div>
+    <div class="campo"><label>Senha</label><input type="password" id="l-senha" placeholder="••••••••"></div>
+    <button class="btn btn-az" onclick="login()" style="margin-bottom:8px">Entrar</button>
+    <button class="btn btn-cz" onclick="closeLogin()">Cancelar</button>
   </div>
 </div>
 
 <!-- APP TÉCNICO -->
 <div id="pg-app" style="display:none">
   <div class="header">
-    <div>
-      <div class="header-title">TechTV</div>
-      <div class="header-sub" id="h-usuario"></div>
-    </div>
-    <button class="btn-sair" onclick="sair()">Sair</button>
+    <div><div class="htit">TechTV</div><div class="hsub" id="h-usr"></div></div>
+    <button class="bsair" onclick="sair()">Sair</button>
   </div>
   <nav class="nav">
-    <button class="nav-btn ativo" id="nav-dash" onclick="aba('dashboard','nav-dash')">Dashboard</button>
-    <button class="nav-btn" id="nav-ord" onclick="aba('ordens','nav-ord')">Ordens</button>
-    <button class="nav-btn" id="nav-bus" onclick="aba('buscar','nav-bus')">Buscar</button>
-    <button class="nav-btn" id="nav-nova" onclick="aba('nova-os','nav-nova')">+ Nova OS</button>
+    <button class="nbtn on" id="n-dash" onclick="goTab('dash','n-dash')">Dashboard</button>
+    <button class="nbtn" id="n-ord" onclick="goTab('ord','n-ord')">Ordens</button>
+    <button class="nbtn" id="n-bus" onclick="goTab('bus','n-bus')">Buscar</button>
+    <button class="nbtn" id="n-nova" onclick="goTab('nova','n-nova')">+ Nova OS</button>
   </nav>
-  <div id="tela-dashboard" class="tela ativa">
-    <div id="d-metricas" class="metricas"><div class="metrica"><div class="spin"></div></div></div>
-    <div class="secao">Últimas OS</div>
-    <div id="d-lista"></div>
+  <div id="t-dash" class="tela on">
+    <div id="d-met" class="metricas"><div class="metrica"><div class="spin"></div></div></div>
+    <div class="sec">Últimas OS</div>
+    <div id="d-list"></div>
   </div>
-  <div id="tela-ordens" class="tela">
+  <div id="t-ord" class="tela">
     <div class="filtros">
-      <button class="filtro ativo" id="f-todas" onclick="filtrar('',this)">Todas</button>
+      <button class="filtro on" onclick="filtrar('',this)">Todas</button>
       <button class="filtro" onclick="filtrar('Aberta',this)">Abertas</button>
       <button class="filtro" onclick="filtrar('Em andamento',this)">Andamento</button>
       <button class="filtro" onclick="filtrar('Orcamento',this)">Orçamento</button>
       <button class="filtro" onclick="filtrar('Pronto',this)">Prontas</button>
       <button class="filtro" onclick="filtrar('Entregue',this)">Entregues</button>
     </div>
-    <div id="o-lista"></div>
+    <div id="o-list"></div>
   </div>
-  <div id="tela-buscar" class="tela">
-    <div class="campo">
-      <input type="search" id="b-campo" placeholder="Cliente, nº OS ou modelo..." oninput="buscarTecnico(this.value)" autocomplete="off">
-    </div>
-    <div id="b-lista"></div>
+  <div id="t-bus" class="tela">
+    <div class="campo"><input type="search" id="b-q" placeholder="Cliente, nº OS ou modelo..." oninput="buscar(this.value)" autocomplete="off"></div>
+    <div id="b-list"></div>
   </div>
-
-  <div id="tela-nova-os" class="tela">
-    <div class="card" style="margin-bottom:12px">
-      <div class="card-head">Dados do Cliente</div>
-      <div class="card-body">
-        <div class="campo"><label>Nome completo *</label><input id="n-cli-nome" placeholder="Nome do cliente"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <div class="campo"><label>Telefone</label><input id="n-cli-tel" placeholder="(51) 99999-9999" type="tel"></div>
-          <div class="campo"><label>CPF/CNPJ</label><input id="n-cli-doc" placeholder="000.000.000-00"></div>
+  <div id="t-nova" class="tela">
+    <div class="card">
+      <div class="card-h">Dados do Cliente</div>
+      <div class="card-b">
+        <div class="campo"><label>Nome *</label><input id="nc-nome" placeholder="Nome completo"></div>
+        <div class="grid2">
+          <div class="campo"><label>Telefone</label><input id="nc-tel" placeholder="(51) 99999-9999" type="tel"></div>
+          <div class="campo"><label>CPF/CNPJ</label><input id="nc-doc" placeholder="000.000.000-00"></div>
         </div>
-        <div class="campo"><label>E-mail</label><input id="n-cli-email" placeholder="email@exemplo.com" type="email"></div>
+        <div class="campo"><label>E-mail</label><input id="nc-email" placeholder="email@exemplo.com" type="email"></div>
       </div>
     </div>
-    <div class="card" style="margin-bottom:12px">
-      <div class="card-head">Dados do Aparelho</div>
-      <div class="card-body">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="card">
+      <div class="card-h">Dados do Aparelho</div>
+      <div class="card-b">
+        <div class="grid2">
           <div class="campo"><label>Marca</label>
-            <select id="n-tv-marca">
+            <select id="nc-marca">
               <option>Samsung</option><option>LG</option><option>Sony</option>
               <option>Philips</option><option>TCL</option><option>Hisense</option>
               <option>Panasonic</option><option>Outras</option>
             </select>
           </div>
           <div class="campo"><label>Tipo</label>
-            <select id="n-tv-tipo">
+            <select id="nc-tipo">
               <option>Smart TV</option><option>LED</option><option>OLED</option>
               <option>QLED</option><option>LCD</option><option>Plasma</option>
             </select>
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:2fr 1fr;gap:10px">
-          <div class="campo"><label>Modelo</label><input id="n-tv-modelo" placeholder="Ex: UN55TU7000"></div>
-          <div class="campo"><label>Tamanho (pol.)</label><input id="n-tv-tam" placeholder="55" type="number"></div>
+        <div class="grid2">
+          <div class="campo"><label>Modelo</label><input id="nc-modelo" placeholder="Ex: UN55TU7000"></div>
+          <div class="campo"><label>Tamanho (pol.)</label><input id="nc-tam" placeholder="55" type="number"></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <div class="campo"><label>Nº Série</label><input id="n-tv-serie" placeholder="Número de série"></div>
-          <div class="campo"><label>Ano</label><input id="n-tv-ano" placeholder="2022" type="number"></div>
+        <div class="grid2">
+          <div class="campo"><label>Nº Série</label><input id="nc-serie" placeholder="Número de série"></div>
+          <div class="campo"><label>Ano</label><input id="nc-ano" placeholder="2022" type="number"></div>
         </div>
         <div class="campo"><label>Defeito relatado</label>
-          <textarea id="n-tv-defeito" placeholder="Descreva o problema..." style="height:70px;resize:none"></textarea>
+          <textarea id="nc-defeito" placeholder="Descreva o problema..." style="height:70px;resize:none"></textarea>
         </div>
       </div>
     </div>
-    <div class="card" style="margin-bottom:12px">
-      <div class="card-head">Checklist de Entrada</div>
-      <div class="card-body" id="n-checklist"></div>
+    <div class="card">
+      <div class="card-h">Checklist de Entrada</div>
+      <div class="card-b" id="nc-chk"></div>
     </div>
-    <div class="card" style="margin-bottom:12px">
-      <div class="card-head">Serviços e Peças</div>
-      <div class="card-body">
-        <div id="n-srv-lista" style="margin-bottom:10px"></div>
-        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-bottom:8px">
-          <input id="n-srv-desc" placeholder="Descrição do serviço/peça">
-          <input id="n-srv-qtd" type="number" value="1" min="1" placeholder="Qtd">
-          <input id="n-srv-val" type="number" placeholder="R$ 0,00" step="0.01">
+    <div class="card">
+      <div class="card-h">Serviços e Peças</div>
+      <div class="card-b">
+        <div id="nc-srv-list" style="margin-bottom:10px"></div>
+        <div class="grid3" style="margin-bottom:8px">
+          <input id="nc-sdesc" placeholder="Descrição do item">
+          <input id="nc-sqtd" type="number" value="1" min="1" placeholder="Qtd">
+          <input id="nc-sval" type="number" placeholder="R$ 0,00" step="0.01">
         </div>
-        <button class="btn btn-verde btn-sm" style="width:100%" onclick="nAddServico()">+ Adicionar item</button>
-        <div id="n-total" style="text-align:right;font-size:16px;font-weight:800;margin-top:10px;padding-top:10px;border-top:1px solid var(--borda)">Total: R$ 0,00</div>
+        <button class="btn-sm btn-vd" onclick="ncAddSrv()">+ Adicionar item</button>
+        <div id="nc-total" style="text-align:right;font-size:16px;font-weight:800;margin-top:12px;padding-top:10px;border-top:1px solid var(--borda)">Total: R$ 0,00</div>
       </div>
     </div>
-    <div class="card" style="margin-bottom:12px">
-      <div class="card-head">Informações Adicionais</div>
-      <div class="card-body">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <div class="campo"><label>Técnico responsável</label><input id="n-tecnico" placeholder="Nome do técnico"></div>
-          <div class="campo"><label>Prazo previsto</label><input id="n-prazo" type="date"></div>
+    <div class="card">
+      <div class="card-h">Informações Adicionais</div>
+      <div class="card-b">
+        <div class="grid2">
+          <div class="campo"><label>Técnico</label><input id="nc-tec" placeholder="Nome do técnico"></div>
+          <div class="campo"><label>Prazo</label><input id="nc-prazo" type="date"></div>
         </div>
       </div>
     </div>
-    <button class="btn btn-azul" onclick="salvarNovaOS()">Salvar OS</button>
-    <button class="btn btn-cinza" style="margin-top:10px" onclick="cancelarNovaOS()">Cancelar</button>
+    <button class="btn btn-az" onclick="salvarOS()">Salvar OS</button>
+    <button class="btn btn-cz" onclick="goTab('dash','n-dash')">Cancelar</button>
   </div>
-
 </div>
 
-<!-- MODAL OS -->
-<div class="modal-os-bg" id="modal-os">
-  <div class="modal-os">
-    <div class="modal-drag"></div>
-    <div id="modal-os-body"></div>
+<!-- MODAL OS DETALHE -->
+<div class="modal-os" id="m-os">
+  <div class="mos">
+    <div class="drag"></div>
+    <div id="m-os-body"></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const API = window.location.origin;
-let TOKEN = localStorage.getItem('tv_tok') || '';
-let USER  = JSON.parse(localStorage.getItem('tv_usr') || 'null');
-let filtroAtual = '';
-let servicosEdit = [];
-let osEditandoNum = null;
+var API = window.location.origin;
+var TOK = localStorage.getItem('tv_t') || '';
+var USR = null;
+try { USR = JSON.parse(localStorage.getItem('tv_u') || 'null'); } catch(e){}
+var filtroAtual = '';
+var srvEdit = [];
+var ncSrv = [];
+var chkState = {};
+var CHKLIST = ['Controle remoto','Suporte/pedestal','Cabo de força','Cabo HDMI','Cabo de antena','Tampa traseira','Parafusos','Manual','Caixa original','Pilhas no controle','Entradas sem dano','Tela sem trincas'];
 
-// Init
-window.onload = function() {
-  if (TOKEN && USER) { mostrarApp(); carregarDashboard(); }
-  document.getElementById('modal-login').addEventListener('click', function(e) {
-    if (e.target === this) fecharLoginModal();
-  });
-  document.getElementById('modal-os').addEventListener('click', function(e) {
-    if (e.target === this) fecharModalOs();
-  });
-  document.getElementById('l-senha').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') login();
-  });
-  document.getElementById('c-num').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') consultarPorNumero();
-  });
-};
+window.addEventListener('load', function() {
+  if (TOK && USR) { showApp(); loadDash(); }
+  document.getElementById('ml').addEventListener('click', function(e){ if(e.target===this) closeLogin(); });
+  document.getElementById('m-os').addEventListener('click', function(e){ if(e.target===this) closeOS(); });
+  document.getElementById('l-senha').addEventListener('keydown', function(e){ if(e.key==='Enter') login(); });
+  document.getElementById('c-num').addEventListener('keydown', function(e){ if(e.key==='Enter') consultarNum(); });
+  document.getElementById('c-nome').addEventListener('keydown', function(e){ if(e.key==='Enter') consultarNome(); });
+});
 
-// Tabs busca pública
-function mudarTab(tipo) {
-  document.getElementById('tab-num').className = 'tab-busca' + (tipo==='numero'?' ativo':'');
-  document.getElementById('tab-nome').className = 'tab-busca' + (tipo==='nome'?' ativo':'');
-  document.getElementById('busca-numero').style.display = tipo==='numero'?'block':'none';
-  document.getElementById('busca-nome').style.display = tipo==='nome'?'block':'none';
-  document.getElementById('resultado-pub').innerHTML = '';
+// ── Tabs públicas ──────────────────────────────────────────────────────────────
+function mudarTab(t) {
+  document.getElementById('tab-n').className = 'tab'+(t==='n'?' on':'');
+  document.getElementById('tab-nm').className = 'tab'+(t==='nm'?' on':'');
+  document.getElementById('b-num').style.display = t==='n'?'block':'none';
+  document.getElementById('b-nome').style.display = t==='nm'?'block':'none';
+  document.getElementById('res-pub').innerHTML = '';
 }
 
-// Consulta pública
-async function consultarPorNumero() {
+// ── Consulta pública ───────────────────────────────────────────────────────────
+async function consultarNum() {
   var num = document.getElementById('c-num').value.trim();
-  if (!num) { toast('Digite o número da OS'); return; }
-  var div = document.getElementById('resultado-pub');
+  if (!num) { showToast('Digite o número da OS'); return; }
+  var div = document.getElementById('res-pub');
   div.innerHTML = '<div class="loading"><div class="spin"></div>Buscando...</div>';
   try {
-    var o = await fetchPublico('/os/consulta/' + num);
-    div.innerHTML = renderOsPublico(o);
+    var o = await apiFetch('/os/consulta/'+num);
+    div.innerHTML = renderOsPub(o);
   } catch(e) {
-    div.innerHTML = '<div class="card"><div class="card-body" style="text-align:center;color:var(--vermelho)">OS #' + num + ' não encontrada.</div></div>';
+    div.innerHTML = '<div class="card"><div class="card-b" style="text-align:center;color:var(--vermelho)">OS #'+num+' não encontrada.</div></div>';
   }
 }
 
-async function consultarPorNome() {
+async function consultarNome() {
   var nome = document.getElementById('c-nome').value.trim();
-  if (!nome || nome.length < 3) { toast('Digite ao menos 3 letras'); return; }
-  var div = document.getElementById('resultado-pub');
+  if (!nome || nome.length < 3) { showToast('Digite ao menos 3 letras'); return; }
+  var div = document.getElementById('res-pub');
   div.innerHTML = '<div class="loading"><div class="spin"></div>Buscando...</div>';
   try {
-    var lista = await fetchPublico('/os/consulta-nome/' + encodeURIComponent(nome));
+    var lista = await apiFetch('/os/consulta-nome/'+encodeURIComponent(nome));
     if (!lista.length) {
-      div.innerHTML = '<div class="card"><div class="card-body" style="text-align:center;color:var(--cinza)">Nenhuma OS encontrada para "' + nome + '".</div></div>';
+      div.innerHTML = '<div class="card"><div class="card-b" style="text-align:center;color:var(--cinza)">Nenhuma OS encontrada para "'+nome+'".</div></div>';
     } else if (lista.length === 1) {
-      var o = await fetchPublico('/os/consulta/' + lista[0].num);
-      div.innerHTML = renderOsPublico(o);
+      var o = await apiFetch('/os/consulta/'+lista[0].num);
+      div.innerHTML = renderOsPub(o);
     } else {
-      div.innerHTML = lista.map(function(o) {
-        return '<div class="os-card" onclick="abrirOsPublico(' + o.num + ')">' +
-          '<div style="display:flex;justify-content:space-between"><span class="os-num">OS #' + o.num + '</span><span class="badge ' + bc(o.status) + '">' + o.status + '</span></div>' +
-          '<div class="os-cliente">' + o.cliente_nome + '</div>' +
-          '<div class="os-apar">' + (o.aparelho||'') + '</div>' +
-          '</div>';
+      div.innerHTML = lista.map(function(o){
+        return '<div class="oscard" onclick="abrirOsPub('+o.num+')">' +
+          '<div style="display:flex;justify-content:space-between"><span class="osnum">OS #'+o.num+'</span><span class="badge '+bc(o.status)+'">'+o.status+'</span></div>' +
+          '<div class="oscli">'+(o.cliente_nome||'')+'</div><div class="osapar">'+(o.aparelho||'')+'</div></div>';
       }).join('');
     }
-  } catch(e) {
-    div.innerHTML = '<div class="card"><div class="card-body" style="text-align:center;color:var(--vermelho)">Erro ao buscar.</div></div>';
-  }
+  } catch(e) { div.innerHTML = '<div class="card"><div class="card-b" style="text-align:center;color:var(--vermelho)">Erro ao buscar.</div></div>'; }
 }
 
-async function abrirOsPublico(num) {
-  var div = document.getElementById('resultado-pub');
+async function abrirOsPub(num) {
+  var div = document.getElementById('res-pub');
   div.innerHTML = '<div class="loading"><div class="spin"></div>Carregando...</div>';
-  try {
-    var o = await fetchPublico('/os/consulta/' + num);
-    div.innerHTML = renderOsPublico(o);
-  } catch(e) {}
+  try { var o = await apiFetch('/os/consulta/'+num); div.innerHTML = renderOsPub(o); } catch(e) {}
 }
 
-function renderOsPublico(o) {
+function renderOsPub(o) {
   var emojis = {'Aberta':'🔧','Em andamento':'⚙️','Orcamento':'💰','Pronto':'✅','Entregue':'📦'};
   var cores = {'Aberta':'#dbeafe','Em andamento':'#fef3c7','Orcamento':'#fef9c3','Pronto':'#d1fae5','Entregue':'#f3f4f6'};
-  var servicos = o.servicos || [];
-  var total = o.total || 0;
-  var orc_status = o.orcamento_status || '';
+  var srvs = o.servicos || []; var total = o.total || 0;
+  var os = o.orcamento_status || '';
 
   var srvHtml = '';
-  if (servicos.length) {
-    var palavras_mo = ['mao de obra','mão de obra','servico','serviço','diagnostico','diagnóstico','visita','reparo','conserto'];
-    var mao_obra = servicos.filter(function(s){ return palavras_mo.some(function(p){ return s.desc.toLowerCase().indexOf(p)>=0; }); });
-    var materiais = servicos.filter(function(s){ return !palavras_mo.some(function(p){ return s.desc.toLowerCase().indexOf(p)>=0; }); });
-    srvHtml = '<div class="card"><div class="card-head">Serviços / Peças</div><div class="card-body">';
-    if (mao_obra.length) {
+  if (srvs.length) {
+    var pmo = ['mao de obra','mão de obra','servico','serviço','diagnostico','diagnóstico','visita','reparo','conserto'];
+    var mo = srvs.filter(function(s){ return pmo.some(function(p){ return s.desc.toLowerCase().indexOf(p)>=0; }); });
+    var mt = srvs.filter(function(s){ return !pmo.some(function(p){ return s.desc.toLowerCase().indexOf(p)>=0; }); });
+    srvHtml = '<div class="card"><div class="card-h">Serviços / Peças</div><div class="card-b">';
+    if (mo.length) {
       srvHtml += '<div style="font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;margin-bottom:6px">Mão de obra</div>';
-      mao_obra.forEach(function(s){ srvHtml += '<div class="srv-linha"><span>' + s.desc + '</span><span style="font-weight:600">R$ ' + fmt(s.qtd*s.val) + '</span></div>'; });
-      srvHtml += '<div style="text-align:right;font-size:12px;color:var(--cinza);margin-bottom:10px">Subtotal: R$ ' + fmt(mao_obra.reduce(function(a,s){return a+s.qtd*s.val;},0)) + '</div>';
+      mo.forEach(function(s){ srvHtml += '<div class="slin"><span>'+s.desc+'</span><span style="font-weight:600">R$ '+fmt(s.qtd*s.val)+'</span></div>'; });
+      srvHtml += '<div style="text-align:right;font-size:12px;color:var(--cinza);margin-bottom:10px">Subtotal: R$ '+fmt(mo.reduce(function(a,s){return a+s.qtd*s.val;},0))+'</div>';
     }
-    if (materiais.length) {
+    if (mt.length) {
       srvHtml += '<div style="font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;margin-bottom:6px">Materiais / Peças</div>';
-      materiais.forEach(function(s){ srvHtml += '<div class="srv-linha"><span>' + s.desc + ' <span style="color:var(--cinza);font-size:11px">x' + s.qtd + '</span></span><span style="font-weight:600">R$ ' + fmt(s.qtd*s.val) + '</span></div>'; });
-      srvHtml += '<div style="text-align:right;font-size:12px;color:var(--cinza);margin-bottom:10px">Subtotal: R$ ' + fmt(materiais.reduce(function(a,s){return a+s.qtd*s.val;},0)) + '</div>';
+      mt.forEach(function(s){ srvHtml += '<div class="slin"><span>'+s.desc+' <span style="color:var(--cinza);font-size:11px">x'+s.qtd+'</span></span><span style="font-weight:600">R$ '+fmt(s.qtd*s.val)+'</span></div>'; });
+      srvHtml += '<div style="text-align:right;font-size:12px;color:var(--cinza);margin-bottom:10px">Subtotal: R$ '+fmt(mt.reduce(function(a,s){return a+s.qtd*s.val;},0))+'</div>';
     }
-    srvHtml += '<div class="srv-total"><span>Total geral</span><span>R$ ' + fmt(total) + '</span></div></div></div>';
+    srvHtml += '<div class="stot"><span>Total geral</span><span>R$ '+fmt(total)+'</span></div></div></div>';
   }
 
   var orcHtml = '';
-  if (servicos.length && o.status === 'Orcamento') {
-    if (orc_status === 'aprovado') {
-      orcHtml = '<div style="background:#d1fae5;color:#065f46;border-radius:10px;padding:14px;text-align:center;margin-bottom:12px"><div style="font-size:22px">✅</div><div style="font-weight:800;margin-top:4px">Orçamento aprovado</div><div style="font-size:12px;opacity:0.8">' + (o.orcamento_em||'') + '</div></div>';
-    } else if (orc_status === 'rejeitado') {
+  if (o.status === 'Orcamento' && srvs.length) {
+    if (os === 'aprovado') {
+      orcHtml = '<div style="background:#d1fae5;color:#065f46;border-radius:10px;padding:14px;text-align:center;margin-bottom:12px"><div style="font-size:22px">✅</div><div style="font-weight:800;margin-top:4px">Orçamento aprovado</div><div style="font-size:12px;opacity:0.8">'+(o.orcamento_em||'')+'</div></div>';
+    } else if (os === 'rejeitado') {
       orcHtml = '<div style="background:#fee2e2;color:#b91c1c;border-radius:10px;padding:14px;text-align:center;margin-bottom:12px"><div style="font-size:22px">❌</div><div style="font-weight:800;margin-top:4px">Orçamento rejeitado</div></div>';
     } else {
-      orcHtml = '<div style="margin-bottom:12px"><div class="campo"><label>Observação (opcional)</label><input id="orc-obs-' + o.num + '" placeholder="Ex: Autorizo o serviço..."></div>' +
+      orcHtml = '<div style="margin-bottom:12px"><div class="campo"><label>Observação (opcional)</label><input id="orc-obs-'+o.num+'" placeholder="Ex: Autorizo o serviço..."></div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' +
-        '<button class="btn btn-verde" onclick="responderOrcamento(' + o.num + ', true)">✅ Aprovar</button>' +
-        '<button class="btn btn-verm" onclick="responderOrcamento(' + o.num + ', false)">❌ Rejeitar</button>' +
+        '<button class="btn btn-vd" onclick="respOrc('+o.num+',true)" style="margin-top:0">✅ Aprovar</button>' +
+        '<button class="btn btn-vm" onclick="respOrc('+o.num+',false)" style="margin-top:0">❌ Rejeitar</button>' +
         '</div></div>';
     }
   }
 
   return '<div class="card">' +
-    '<div class="status-box" style="background:' + (cores[o.status]||'#f3f4f6') + '">' +
-    '<div class="status-emoji">' + (emojis[o.status]||'🔧') + '</div>' +
-    '<div class="status-nome">' + o.status + (orc_status==='aprovado'?' ✅':'') + '</div>' +
-    '<div style="font-size:12px;opacity:0.7">OS #' + o.num + '</div>' +
+    '<div class="sbox" style="background:'+(cores[o.status]||'#f3f4f6')+'">' +
+    '<div class="status-emoji">'+(emojis[o.status]||'🔧')+'</div>' +
+    '<div style="font-size:20px;font-weight:800;margin-top:6px">'+o.status+(os==='aprovado'?' ✅':'')+'</div>' +
+    '<div style="font-size:12px;opacity:0.7">OS #'+o.num+'</div>' +
     (o.status==='Pronto'?'<div style="font-size:13px;font-weight:600;margin-top:4px">Pronta para retirada!</div>':'') +
-    '</div>' +
-    '<div class="card-body">' +
-    '<div class="detalhe-row"><span class="detalhe-lbl">Cliente</span><span class="detalhe-val">' + o.cliente_nome + '</span></div>' +
-    '<div class="detalhe-row"><span class="detalhe-lbl">Aparelho</span><span class="detalhe-val">' + (o.aparelho||'—') + '</span></div>' +
-    '<div class="detalhe-row"><span class="detalhe-lbl">Defeito</span><span class="detalhe-val">' + (o.defeito||'—') + '</span></div>' +
-    '<div class="detalhe-row"><span class="detalhe-lbl">Entrada</span><span class="detalhe-val">' + (o.data_entrada||'—') + '</span></div>' +
-    '<div class="detalhe-row"><span class="detalhe-lbl">Prazo</span><span class="detalhe-val">' + (o.prazo||'—') + '</span></div>' +
-    '<div class="detalhe-row"><span class="detalhe-lbl">Técnico</span><span class="detalhe-val">' + (o.tecnico||'—') + '</span></div>' +
-    (o.data_entrega?'<div class="detalhe-row"><span class="detalhe-lbl">Entregue em</span><span class="detalhe-val">' + o.data_entrega + '</span></div>':'') +
-    '</div></div>' +
-    srvHtml + orcHtml +
-    '<button class="btn btn-cinza" style="margin-top:8px" onclick="novaConsulta()">Nova consulta</button>';
+    '</div><div class="card-b">' +
+    '<div class="drow"><span class="dlbl">Cliente</span><span class="dval">'+o.cliente_nome+'</span></div>' +
+    '<div class="drow"><span class="dlbl">Aparelho</span><span class="dval">'+(o.aparelho||'—')+'</span></div>' +
+    '<div class="drow"><span class="dlbl">Defeito</span><span class="dval">'+(o.defeito||'—')+'</span></div>' +
+    '<div class="drow"><span class="dlbl">Entrada</span><span class="dval">'+(o.data_entrada||'—')+'</span></div>' +
+    '<div class="drow"><span class="dlbl">Prazo</span><span class="dval">'+(o.prazo||'—')+'</span></div>' +
+    '<div class="drow"><span class="dlbl">Técnico</span><span class="dval">'+(o.tecnico||'—')+'</span></div>' +
+    (o.data_entrega?'<div class="drow"><span class="dlbl">Entregue</span><span class="dval">'+o.data_entrega+'</span></div>':'') +
+    '</div></div>' + srvHtml + orcHtml +
+    '<button class="btn btn-cz" onclick="novaConsulta()">Nova consulta</button>';
 }
 
 function novaConsulta() {
-  document.getElementById('resultado-pub').innerHTML = '';
+  document.getElementById('res-pub').innerHTML = '';
   document.getElementById('c-num').value = '';
   document.getElementById('c-nome').value = '';
 }
 
-async function responderOrcamento(num, aprovado) {
-  var obs = (document.getElementById('orc-obs-' + num) || {value:''}).value || '';
+async function respOrc(num, aprov) {
+  var el = document.getElementById('orc-obs-'+num);
+  var obs = el ? el.value : '';
   try {
-    await fetchPublico('/os/' + num + '/orcamento', 'PATCH', {aprovado: aprovado, obs: obs});
-    toast(aprovado ? 'Orçamento aprovado! Entraremos em contato.' : 'Orçamento rejeitado.');
-    abrirOsPublico(num);
-  } catch(e) { toast('Erro ao responder orçamento'); }
+    await apiFetch('/os/'+num+'/orcamento','PATCH',{aprovado:aprov,obs:obs});
+    showToast(aprov?'Orçamento aprovado!':'Orçamento rejeitado.');
+    abrirOsPub(num);
+  } catch(e) { showToast('Erro ao responder'); }
 }
 
-// Login técnico
-function abrirLoginTecnico() {
-  document.getElementById('modal-login').classList.add('show');
-  setTimeout(function(){ document.getElementById('l-email').focus(); }, 100);
-}
-function fecharLoginModal() {
-  document.getElementById('modal-login').classList.remove('show');
-}
+// ── Login ──────────────────────────────────────────────────────────────────────
+function openLogin() { document.getElementById('ml').classList.add('on'); }
+function closeLogin() { document.getElementById('ml').classList.remove('on'); }
 async function login() {
   var email = document.getElementById('l-email').value.trim();
   var senha = document.getElementById('l-senha').value;
-  if (!email || !senha) { toast('Preencha e-mail e senha'); return; }
+  if (!email || !senha) { showToast('Preencha e-mail e senha'); return; }
   try {
-    var r = await req('/auth/login', 'POST', {email: email, senha: senha});
-    TOKEN = r.token;
-    USER = {nome: r.nome, perfil: r.perfil};
-    localStorage.setItem('tv_tok', TOKEN);
-    localStorage.setItem('tv_usr', JSON.stringify(USER));
-    fecharLoginModal();
-    mostrarApp();
-    carregarDashboard();
-  } catch(e) { toast(e.message || 'E-mail ou senha incorretos'); }
+    var r = await apiReq('/auth/login','POST',{email:email,senha:senha});
+    TOK = r.token; USR = {nome:r.nome,perfil:r.perfil};
+    localStorage.setItem('tv_t',TOK); localStorage.setItem('tv_u',JSON.stringify(USR));
+    closeLogin(); showApp(); loadDash();
+  } catch(e) { showToast(e.message||'E-mail ou senha incorretos'); }
 }
 function sair() {
-  TOKEN = ''; USER = null;
-  localStorage.removeItem('tv_tok'); localStorage.removeItem('tv_usr');
-  document.getElementById('pg-app').style.display = 'none';
-  document.getElementById('pg-publico').style.display = 'block';
+  TOK=''; USR=null;
+  localStorage.removeItem('tv_t'); localStorage.removeItem('tv_u');
+  document.getElementById('pg-app').style.display='none';
+  document.getElementById('pg-pub').style.display='block';
 }
-function mostrarApp() {
-  document.getElementById('pg-publico').style.display = 'none';
-  document.getElementById('pg-app').style.display = 'block';
-  if (USER) document.getElementById('h-usuario').textContent = USER.nome + ' · ' + (USER.perfil==='admin'?'Admin':'Técnico');
-}
-
-// Abas técnico
-function aba(nome, navId) {
-  document.querySelectorAll('.tela').forEach(function(t){ t.classList.remove('ativa'); });
-  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('ativo'); });
-  document.getElementById('tela-' + nome).classList.add('ativa');
-  document.getElementById(navId).classList.add('ativo');
-  if (nome === 'dashboard') carregarDashboard();
-  if (nome === 'ordens') carregarOrdens(filtroAtual);
-  if (nome === 'nova-os') initNovaOS();
+function showApp() {
+  document.getElementById('pg-pub').style.display='none';
+  document.getElementById('pg-app').style.display='block';
+  if(USR) document.getElementById('h-usr').textContent = USR.nome+' · '+(USR.perfil==='admin'?'Admin':'Técnico');
 }
 
-// Dashboard
-async function carregarDashboard() {
+// ── Navegação técnico ──────────────────────────────────────────────────────────
+function goTab(nome, navId) {
+  document.querySelectorAll('.tela').forEach(function(t){t.classList.remove('on');});
+  document.querySelectorAll('.nbtn').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('t-'+nome).classList.add('on');
+  document.getElementById(navId).classList.add('on');
+  if(nome==='dash') loadDash();
+  if(nome==='ord') loadOrdens(filtroAtual);
+  if(nome==='nova') initNova();
+}
+
+// ── Dashboard ──────────────────────────────────────────────────────────────────
+async function loadDash() {
   try {
-    var d = await req('/dashboard');
-    document.getElementById('d-metricas').innerHTML =
-      '<div class="metrica"><div class="metrica-val">' + d.total + '</div><div class="metrica-lbl">Total OS</div></div>' +
-      '<div class="metrica m-azul"><div class="metrica-val">' + d.abertas + '</div><div class="metrica-lbl">Abertas</div></div>' +
-      '<div class="metrica m-am"><div class="metrica-val">' + d.andamento + '</div><div class="metrica-lbl">Andamento</div></div>' +
-      '<div class="metrica m-verde"><div class="metrica-val">' + d.prontas + '</div><div class="metrica-lbl">Prontas</div></div>';
-    document.getElementById('d-lista').innerHTML = d.ultimas.length
-      ? d.ultimas.map(osCardHtml).join('')
-      : '<div class="vazio">Nenhuma OS ainda</div>';
-  } catch(e) { toast('Erro ao carregar dashboard'); }
+    var d = await apiReq('/dashboard');
+    document.getElementById('d-met').innerHTML =
+      '<div class="metrica"><div class="mval">'+d.total+'</div><div class="mlbl">Total OS</div></div>' +
+      '<div class="metrica m-az"><div class="mval">'+d.abertas+'</div><div class="mlbl">Abertas</div></div>' +
+      '<div class="metrica m-am"><div class="mval">'+d.andamento+'</div><div class="mlbl">Andamento</div></div>' +
+      '<div class="metrica m-vd"><div class="mval">'+d.prontas+'</div><div class="mlbl">Prontas</div></div>';
+    document.getElementById('d-list').innerHTML = d.ultimas.length
+      ? d.ultimas.map(osCard).join('') : '<div class="vazio">Nenhuma OS ainda</div>';
+  } catch(e) { showToast('Erro ao carregar dashboard'); }
 }
 
-// Ordens
-async function carregarOrdens(status) {
-  var el = document.getElementById('o-lista');
+// ── Ordens ─────────────────────────────────────────────────────────────────────
+async function loadOrdens(status) {
+  var el = document.getElementById('o-list');
   el.innerHTML = '<div class="loading"><div class="spin"></div>Carregando...</div>';
   try {
-    var url = '/os';
-    if (status) url += '?status=' + encodeURIComponent(status);
-    var lista = await req(url);
-    el.innerHTML = lista.length ? lista.map(osCardHtml).join('') : '<div class="vazio">Nenhuma OS</div>';
+    var url = '/os'; if(status) url += '?status='+encodeURIComponent(status);
+    var lista = await apiReq(url);
+    el.innerHTML = lista.length ? lista.map(osCard).join('') : '<div class="vazio">Nenhuma OS</div>';
   } catch(e) { el.innerHTML = '<div class="vazio">Erro ao carregar</div>'; }
 }
-function filtrar(status, btn) {
-  document.querySelectorAll('.filtro').forEach(function(b){ b.classList.remove('ativo'); });
-  btn.classList.add('ativo');
-  filtroAtual = status;
-  carregarOrdens(status);
+function filtrar(st, btn) {
+  document.querySelectorAll('.filtro').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on'); filtroAtual = st; loadOrdens(st);
 }
-async function buscarTecnico(termo) {
-  if (!termo || termo.length < 2) { document.getElementById('b-lista').innerHTML = ''; return; }
+async function buscar(q) {
+  if(!q||q.length<2){document.getElementById('b-list').innerHTML='';return;}
   try {
-    var r = await req('/os?busca=' + encodeURIComponent(termo));
-    document.getElementById('b-lista').innerHTML = r.length ? r.map(osCardHtml).join('') : '<div class="vazio">Sem resultados</div>';
-  } catch(e) {}
+    var r = await apiReq('/os?busca='+encodeURIComponent(q));
+    document.getElementById('b-list').innerHTML = r.length?r.map(osCard).join(''):'<div class="vazio">Sem resultados</div>';
+  } catch(e){}
 }
-function osCardHtml(o) {
-  return '<div class="os-card" onclick="abrirOS(' + o.num + ')">' +
+function osCard(o) {
+  return '<div class="oscard" onclick="abrirOS('+o.num+')">' +
     '<div style="display:flex;justify-content:space-between;align-items:center">' +
-    '<span class="os-num">OS #' + o.num + '</span>' +
-    '<span class="badge ' + bc(o.status) + '">' + o.status + '</span>' +
-    '</div>' +
-    '<div class="os-cliente">' + (o.cliente||'') + '</div>' +
-    '<div class="os-apar">' + (o.aparelho||'') + '</div>' +
-    '<div class="os-footer">' +
-    '<span style="font-size:11px;color:var(--cinza)">' + (o.data_entrada||'') + '</span>' +
-    '<span style="font-size:14px;font-weight:700">R$ ' + fmt(o.total) + '</span>' +
-    '</div></div>';
+    '<span class="osnum">OS #'+o.num+'</span><span class="badge '+bc(o.status)+'">'+o.status+'</span></div>' +
+    '<div class="oscli">'+(o.cliente||'')+'</div><div class="osapar">'+(o.aparelho||'')+'</div>' +
+    '<div class="osfoot"><span style="font-size:11px;color:var(--cinza)">'+(o.data_entrada||'')+'</span>' +
+    '<span style="font-size:14px;font-weight:700">R$ '+fmt(o.total)+'</span></div></div>';
 }
 
-// Detalhe OS técnico
+// ── Detalhe OS ─────────────────────────────────────────────────────────────────
 async function abrirOS(num) {
-  document.getElementById('modal-os-body').innerHTML = '<div class="loading"><div class="spin"></div>Carregando...</div>';
-  document.getElementById('modal-os').classList.add('show');
+  document.getElementById('m-os-body').innerHTML = '<div class="loading"><div class="spin"></div>Carregando...</div>';
+  document.getElementById('m-os').classList.add('on');
   try {
-    var o = await req('/os/' + num);
-    osEditandoNum = num;
-    servicosEdit = JSON.parse(JSON.stringify(o.servicos || []));
+    var o = await apiReq('/os/'+num);
+    srvEdit = JSON.parse(JSON.stringify(o.servicos||[]));
     renderModalOS(o);
-  } catch(e) {
-    document.getElementById('modal-os-body').innerHTML = '<div class="vazio">Erro ao carregar</div>';
-  }
+  } catch(e) { document.getElementById('m-os-body').innerHTML = '<div class="vazio">Erro ao carregar</div>'; }
 }
 
 function renderModalOS(o) {
-  var cli = o.cliente || {}; var tv = o.tv || {};
-  var hist = (o.historico || []).slice(-4).reverse();
-  var cores = {'Aberta':'#dbeafe','Em andamento':'#fef3c7','Orcamento':'#fef9c3','Pronto':'#d1fae5','Entregue':'#f3f4f6'};
-  var statusOpts = ['Aberta','Em andamento','Orcamento','Pronto','Entregue'];
-
-  var html = '<div style="background:' + (cores[o.status]||'#f3f4f6') + ';border-radius:10px;text-align:center;padding:18px;margin-bottom:14px">' +
-    '<div style="font-size:20px;font-weight:800">' + o.status + '</div>' +
-    '<div style="font-size:12px;opacity:0.7;margin-top:2px">OS #' + o.num + ' · ' + (o.data_entrada||'') + '</div></div>' +
-    '<div class="card"><div class="card-head">Cliente</div><div class="card-body">' +
-    '<div class="detalhe-row"><span class="detalhe-lbl">Nome</span><span class="detalhe-val">' + (cli.nome||'—') + '</span></div>' +
-    '<div class="detalhe-row"><span class="detalhe-lbl">Telefone</span><span class="detalhe-val">' + (cli.tel||'—') + '</span></div>' +
+  var cli=o.cliente||{}; var tv=o.tv||{};
+  var hist=(o.historico||[]).slice(-4).reverse();
+  var cores={'Aberta':'#dbeafe','Em andamento':'#fef3c7','Orcamento':'#fef9c3','Pronto':'#d1fae5','Entregue':'#f3f4f6'};
+  var sts=['Aberta','Em andamento','Orcamento','Pronto','Entregue'];
+  var h = '<div style="background:'+(cores[o.status]||'#f3f4f6')+';border-radius:10px;text-align:center;padding:18px;margin-bottom:14px">' +
+    '<div style="font-size:20px;font-weight:800">'+o.status+'</div>' +
+    '<div style="font-size:12px;opacity:0.7;margin-top:2px">OS #'+o.num+' · '+(o.data_entrada||'')+'</div></div>' +
+    '<div class="card"><div class="card-h">Cliente</div><div class="card-b">' +
+    '<div class="drow"><span class="dlbl">Nome</span><span class="dval">'+(cli.nome||'—')+'</span></div>' +
+    '<div class="drow"><span class="dlbl">Telefone</span><span class="dval">'+(cli.tel||'—')+'</span></div>' +
     '</div></div>' +
-    '<div class="card"><div class="card-head">Aparelho</div><div class="card-body">' +
-    '<div class="detalhe-row"><span class="detalhe-lbl">Marca/Modelo</span><span class="detalhe-val">' + (tv.marca||'') + ' ' + (tv.modelo||'') + '</span></div>' +
-    '<div class="detalhe-row"><span class="detalhe-lbl">Defeito</span><span class="detalhe-val">' + (o.defeito||'—') + '</span></div>' +
-    '<div class="detalhe-row"><span class="detalhe-lbl">Técnico</span><span class="detalhe-val">' + (o.tecnico||'—') + '</span></div>' +
-    '<div class="detalhe-row"><span class="detalhe-lbl">Prazo</span><span class="detalhe-val">' + (o.prazo||'—') + '</span></div>' +
+    '<div class="card"><div class="card-h">Aparelho</div><div class="card-b">' +
+    '<div class="drow"><span class="dlbl">Marca/Modelo</span><span class="dval">'+(tv.marca||'')+' '+(tv.modelo||'')+'</span></div>' +
+    '<div class="drow"><span class="dlbl">Defeito</span><span class="dval">'+(o.defeito||'—')+'</span></div>' +
+    '<div class="drow"><span class="dlbl">Técnico</span><span class="dval">'+(o.tecnico||'—')+'</span></div>' +
+    '<div class="drow"><span class="dlbl">Prazo</span><span class="dval">'+(o.prazo||'—')+'</span></div>' +
     '</div></div>' +
-    '<div class="secao">Peças e Mão de Obra</div>' +
-    '<div class="info-box info-azul">Adicione, edite ou remova itens e salve ao final.</div>' +
-    '<div class="card"><div class="card-body" id="srv-lista-edit"></div>' +
-    '<div class="total-line"><span style="font-size:13px;font-weight:600;color:var(--cinza)">Total</span>' +
-    '<span style="font-size:18px;font-weight:800" id="srv-total-edit">R$ ' + fmt(o.total) + '</span></div></div>' +
-    '<div class="card"><div class="card-head">Adicionar item</div><div class="card-body">' +
-    '<div class="campo"><label>Descrição</label><input id="add-desc" placeholder="Ex: Placa principal, Mão de obra..."></div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' +
-    '<div class="campo"><label>Qtd</label><input type="number" id="add-qtd" value="1" min="1"></div>' +
-    '<div class="campo"><label>Valor unit. (R$)</label><input type="number" id="add-val" placeholder="0,00" min="0" step="0.01"></div>' +
-    '</div><button class="btn btn-verde btn-sm" style="width:100%" onclick="addServico()">+ Adicionar</button>' +
+    '<div class="sec">Peças e Mão de Obra</div>' +
+    '<div class="ibox iaz">Adicione, edite ou remova itens e salve ao final.</div>' +
+    '<div class="card"><div class="card-b" id="srv-ed"></div>' +
+    '<div class="totline"><span style="font-size:13px;font-weight:600;color:var(--cinza)">Total</span>' +
+    '<span style="font-size:18px;font-weight:800" id="srv-tot">R$ '+fmt(o.total)+'</span></div></div>' +
+    '<div class="card"><div class="card-h">Adicionar item</div><div class="card-b">' +
+    '<div class="campo"><label>Descrição</label><input id="ad-desc" placeholder="Ex: Placa principal, Mão de obra..."></div>' +
+    '<div class="grid2"><div class="campo"><label>Qtd</label><input type="number" id="ad-qtd" value="1" min="1"></div>' +
+    '<div class="campo"><label>Valor unit. (R$)</label><input type="number" id="ad-val" placeholder="0,00" min="0" step="0.01"></div></div>' +
+    '<button class="btn-sm btn-vd" onclick="addSrvEdit()">+ Adicionar</button></div></div>' +
+    '<div class="sec">Alterar Status</div>' +
+    '<div class="card"><div class="card-b">' +
+    '<div class="campo"><label>Novo status</label><select id="ns-st">'+sts.map(function(s){return '<option'+(s===o.status?' selected':'')+'>'+s+'</option>';}).join('')+'</select></div>' +
+    '<div class="campo"><label>Observação</label><input id="ns-obs" placeholder="Ex: Aguardando peça..."></div>' +
     '</div></div>' +
-    '<div class="secao">Alterar Status</div>' +
-    '<div class="card"><div class="card-body">' +
-    '<div class="campo"><label>Novo status</label><select id="novo-status">' +
-    statusOpts.map(function(s){ return '<option' + (s===o.status?' selected':'') + '>' + s + '</option>'; }).join('') +
-    '</select></div>' +
-    '<div class="campo"><label>Observação (opcional)</label><input id="obs-status" placeholder="Ex: Aguardando peça..."></div>' +
-    '</div></div>' +
-    '<button class="btn btn-azul" onclick="salvarEdicao(' + o.num + ')" style="margin-top:4px">Salvar alterações</button>' +
-    '<button class="btn btn-cinza" onclick="fecharModalOs()" style="margin-top:10px">Fechar</button>';
-
-  if (hist.length) {
-    html += '<div class="secao">Histórico</div><div class="card"><div class="card-body">';
-    hist.forEach(function(h){
-      html += '<div class="hist"><b>' + h.de + '</b> → <b>' + h.para + '</b>' +
-        '<div style="font-size:11px;color:var(--cinza)">' + h.por + ' · ' + h.em + '</div>' +
-        (h.obs?'<div style="font-size:12px;color:var(--cinza)">' + h.obs + '</div>':'') + '</div>';
-    });
-    html += '</div></div>';
+    '<button class="btn btn-az" onclick="saveEdit('+o.num+')" style="margin-top:4px">Salvar alterações</button>' +
+    '<button class="btn btn-cz" onclick="closeOS()">Fechar</button>';
+  if(hist.length){
+    h+='<div class="sec">Histórico</div><div class="card"><div class="card-b">';
+    hist.forEach(function(e){h+='<div class="hist"><b>'+e.de+'</b> → <b>'+e.para+'</b><div style="font-size:11px;color:var(--cinza)">'+e.por+' · '+e.em+'</div>'+(e.obs?'<div style="font-size:12px;color:var(--cinza)">'+e.obs+'</div>':'')+'</div>';});
+    h+='</div></div>';
   }
-
-  document.getElementById('modal-os-body').innerHTML = html;
-  renderServicosEdit();
+  document.getElementById('m-os-body').innerHTML = h;
+  renderSrvEdit();
 }
 
-function renderServicosEdit() {
-  var el = document.getElementById('srv-lista-edit');
-  if (!el) return;
-  if (!servicosEdit.length) {
-    el.innerHTML = '<div style="color:var(--cinza);font-size:13px;text-align:center;padding:8px">Nenhum item</div>';
-  } else {
-    el.innerHTML = servicosEdit.map(function(s, i) {
-      return '<div class="srv-item">' +
-        '<div class="srv-desc"><div class="srv-desc-nome">' + s.desc + '</div>' +
-        '<div class="srv-desc-sub">Qtd: ' + s.qtd + ' × R$ ' + fmt(s.val) + '</div></div>' +
-        '<div class="srv-val-txt">R$ ' + fmt(s.qtd*s.val) + '</div>' +
-        '<button class="srv-del" onclick="remServico(' + i + ')">✕</button>' +
-        '</div>';
-    }).join('');
-  }
-  var total = servicosEdit.reduce(function(a,s){ return a+s.qtd*s.val; }, 0);
-  var el2 = document.getElementById('srv-total-edit');
-  if (el2) el2.textContent = 'R$ ' + fmt(total);
+function renderSrvEdit() {
+  var el = document.getElementById('srv-ed'); if(!el) return;
+  if(!srvEdit.length){el.innerHTML='<div style="color:var(--cinza);font-size:13px;text-align:center;padding:8px">Nenhum item</div>';}
+  else{el.innerHTML=srvEdit.map(function(s,i){return '<div class="sitem"><div class="sdesc"><div class="sdnome">'+s.desc+'</div><div class="sdsub">Qtd: '+s.qtd+' × R$ '+fmt(s.val)+'</div></div><div class="svaltxt">R$ '+fmt(s.qtd*s.val)+'</div><button class="sdel" onclick="remSrvEdit('+i+')">✕</button></div>';}).join('');}
+  var tot=srvEdit.reduce(function(a,s){return a+s.qtd*s.val;},0);
+  var el2=document.getElementById('srv-tot'); if(el2) el2.textContent='R$ '+fmt(tot);
 }
-
-function addServico() {
-  var desc = document.getElementById('add-desc').value.trim();
-  var qtd  = parseFloat(document.getElementById('add-qtd').value) || 1;
-  var val  = parseFloat(document.getElementById('add-val').value) || 0;
-  if (!desc) { toast('Informe a descrição'); return; }
-  servicosEdit.push({desc:desc, qtd:qtd, val:val});
-  document.getElementById('add-desc').value = '';
-  document.getElementById('add-val').value = '';
-  document.getElementById('add-qtd').value = '1';
-  renderServicosEdit();
+function addSrvEdit(){
+  var d=document.getElementById('ad-desc').value.trim();
+  var q=parseFloat(document.getElementById('ad-qtd').value)||1;
+  var v=parseFloat(document.getElementById('ad-val').value)||0;
+  if(!d){showToast('Informe a descrição');return;}
+  srvEdit.push({desc:d,qtd:q,val:v});
+  document.getElementById('ad-desc').value=''; document.getElementById('ad-val').value=''; document.getElementById('ad-qtd').value='1';
+  renderSrvEdit();
 }
-
-function remServico(idx) {
-  servicosEdit.splice(idx, 1);
-  renderServicosEdit();
-}
-
-async function salvarEdicao(num) {
-  var status = document.getElementById('novo-status').value;
-  var obs    = document.getElementById('obs-status').value;
-  try {
-    var r = await req('/os/' + num + '/editar', 'PATCH', {servicos: servicosEdit, status: status, observacao: obs});
-    toast('OS atualizada!');
-    fecharModalOs();
-    carregarDashboard();
-    carregarOrdens(filtroAtual);
-    if (r.wpp_link) {
-      setTimeout(function() {
-        var msg = status === 'Orcamento'
-          ? '💰 Orçamento enviado!\n\nDeseja abrir o WhatsApp para enviar ao cliente?'
-          : '✅ OS marcada como PRONTA!\n\nDeseja enviar mensagem pelo WhatsApp para o cliente?';
-        if (confirm(msg)) {
-          window.open(r.wpp_link, '_blank');
-        }
-      }, 400);
+function remSrvEdit(i){srvEdit.splice(i,1);renderSrvEdit();}
+async function saveEdit(num){
+  var st=document.getElementById('ns-st').value;
+  var obs=document.getElementById('ns-obs').value;
+  try{
+    var r=await apiReq('/os/'+num+'/editar','PATCH',{servicos:srvEdit,status:st,observacao:obs});
+    showToast('OS atualizada!'); closeOS(); loadDash(); loadOrdens(filtroAtual);
+    if(r.wpp_link){
+      setTimeout(function(){
+        var m=st==='Orcamento'?'💰 Enviar orçamento pelo WhatsApp para o cliente?':'✅ OS pronta! Enviar mensagem pelo WhatsApp?';
+        if(confirm(m)) window.open(r.wpp_link,'_blank');
+      },400);
     }
-  } catch(e) { toast('Erro: ' + (e.message||'')); }
+  }catch(e){showToast('Erro: '+(e.message||''));}
 }
-
-function fecharModalOs() { document.getElementById('modal-os').classList.remove('show'); }
-
+function closeOS(){document.getElementById('m-os').classList.remove('on');}
 
 // ── Nova OS ────────────────────────────────────────────────────────────────────
-var CHECKLIST = ['Controle remoto','Suporte/pedestal','Cabo de força','Cabo HDMI',
-  'Cabo de antena','Tampa traseira','Parafusos','Manual',
-  'Caixa original','Pilhas no controle','Entradas sem dano','Tela sem trincas'];
-var checkState = {};
-var nServicos = [];
-
-function initNovaOS() {
-  checkState = {};
-  nServicos = [];
-  // Limpar campos
-  ['n-cli-nome','n-cli-tel','n-cli-doc','n-cli-email',
-   'n-tv-modelo','n-tv-tam','n-tv-serie','n-tv-ano',
-   'n-tv-defeito','n-tecnico','n-srv-desc','n-srv-val'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) { el.value = ''; }
-  });
-  var qtdEl = document.getElementById('n-srv-qtd');
-  if (qtdEl) qtdEl.value = '1';
-  // Prazo padrão hoje
-  var hoje = new Date(); var mm = String(hoje.getMonth()+1).padStart(2,'0'); var dd = String(hoje.getDate()).padStart(2,'0');
-  var prazoEl = document.getElementById('n-prazo');
-  if (prazoEl) prazoEl.value = hoje.getFullYear() + '-' + mm + '-' + dd;
-  renderChecklist();
-  nRenderServicos();
+function initNova(){
+  chkState={}; ncSrv=[];
+  ['nc-nome','nc-tel','nc-doc','nc-email','nc-modelo','nc-tam','nc-serie','nc-ano','nc-defeito','nc-tec','nc-sdesc','nc-sval'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  var qel=document.getElementById('nc-sqtd');if(qel)qel.value='1';
+  var hj=new Date();var mm=String(hj.getMonth()+1).padStart(2,'0');var dd=String(hj.getDate()).padStart(2,'0');
+  var pel=document.getElementById('nc-prazo');if(pel)pel.value=hj.getFullYear()+'-'+mm+'-'+dd;
+  renderChk(); ncRenderSrv();
 }
-
-function renderChecklist() {
-  var el = document.getElementById('n-checklist');
-  if (!el) return;
-  el.innerHTML = CHECKLIST.map(function(item) {
-    var ok = checkState[item] || false;
-    return '<div class="check-item' + (ok?' checked':'') + '" onclick="toggleCheck('' + item + '')">' +
-      '<span>' + (ok?'☑':'☐') + '</span><span>' + item + '</span></div>';
+function renderChk(){
+  var el=document.getElementById('nc-chk');if(!el)return;
+  el.innerHTML=CHKLIST.map(function(item){
+    var ok=chkState[item]||false;
+    return '<div class="chk'+(ok?' on':'')+'" onclick="toggleChk(\''+item+'\')">'+(ok?'☑':'☐')+' '+item+'</div>';
   }).join('');
 }
-
-function toggleCheck(item) {
-  checkState[item] = !checkState[item];
-  renderChecklist();
+function toggleChk(item){chkState[item]=!chkState[item];renderChk();}
+function ncAddSrv(){
+  var d=document.getElementById('nc-sdesc').value.trim();
+  var q=parseFloat(document.getElementById('nc-sqtd').value)||1;
+  var v=parseFloat(document.getElementById('nc-sval').value)||0;
+  if(!d){showToast('Informe a descrição');return;}
+  ncSrv.push({desc:d,qtd:q,val:v});
+  document.getElementById('nc-sdesc').value='';document.getElementById('nc-sval').value='';document.getElementById('nc-sqtd').value='1';
+  ncRenderSrv();
 }
-
-function nAddServico() {
-  var desc = document.getElementById('n-srv-desc').value.trim();
-  var qtd  = parseFloat(document.getElementById('n-srv-qtd').value) || 1;
-  var val  = parseFloat(document.getElementById('n-srv-val').value) || 0;
-  if (!desc) { toast('Informe a descrição'); return; }
-  nServicos.push({desc:desc, qtd:qtd, val:val});
-  document.getElementById('n-srv-desc').value = '';
-  document.getElementById('n-srv-val').value = '';
-  document.getElementById('n-srv-qtd').value = '1';
-  nRenderServicos();
+function ncRenderSrv(){
+  var el=document.getElementById('nc-srv-list');if(!el)return;
+  if(!ncSrv.length){el.innerHTML='<div style="color:var(--cinza);font-size:13px;padding:4px">Nenhum item adicionado</div>';}
+  else{el.innerHTML=ncSrv.map(function(s,i){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda)"><div><div style="font-size:13px;font-weight:600">'+s.desc+'</div><div style="font-size:11px;color:var(--cinza)">Qtd: '+s.qtd+' × R$ '+fmt(s.val)+'</div></div><div style="display:flex;align-items:center;gap:8px"><span style="font-weight:700">R$ '+fmt(s.qtd*s.val)+'</span><button class="sdel" onclick="ncRemSrv('+i+')">✕</button></div></div>';}).join('');}
+  var tot=ncSrv.reduce(function(a,s){return a+s.qtd*s.val;},0);
+  var tel=document.getElementById('nc-total');if(tel)tel.textContent='Total: R$ '+fmt(tot);
 }
-
-function nRenderServicos() {
-  var el = document.getElementById('n-srv-lista');
-  if (!el) return;
-  if (!nServicos.length) {
-    el.innerHTML = '<div style="color:var(--cinza);font-size:13px;padding:4px">Nenhum item adicionado</div>';
-  } else {
-    el.innerHTML = nServicos.map(function(s, i) {
-      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda)">' +
-        '<div><div style="font-size:13px;font-weight:600">' + s.desc + '</div>' +
-        '<div style="font-size:11px;color:var(--cinza)">Qtd: ' + s.qtd + ' × R$ ' + fmt(s.val) + '</div></div>' +
-        '<div style="display:flex;align-items:center;gap:8px">' +
-        '<span style="font-weight:700">R$ ' + fmt(s.qtd*s.val) + '</span>' +
-        '<button class="srv-del" onclick="nRemServico(' + i + ')">✕</button>' +
-        '</div></div>';
-    }).join('');
-  }
-  var total = nServicos.reduce(function(a,s){ return a+s.qtd*s.val; }, 0);
-  document.getElementById('n-total').textContent = 'Total: R$ ' + fmt(total);
-}
-
-function nRemServico(idx) {
-  nServicos.splice(idx, 1);
-  nRenderServicos();
-}
-
-async function salvarNovaOS() {
-  var nome = (document.getElementById('n-cli-nome').value || '').trim();
-  if (!nome) { toast('Informe o nome do cliente'); return; }
-  var total = nServicos.reduce(function(a,s){ return a+s.qtd*s.val; }, 0);
-  var os_data = {
-    cliente: {
-      nome: nome,
-      tel:   document.getElementById('n-cli-tel').value || '',
-      doc:   document.getElementById('n-cli-doc').value || '',
-      email: document.getElementById('n-cli-email').value || ''
-    },
-    tv: {
-      marca:   document.getElementById('n-tv-marca').value || '',
-      tipo:    document.getElementById('n-tv-tipo').value || '',
-      modelo:  document.getElementById('n-tv-modelo').value || '',
-      tamanho: document.getElementById('n-tv-tam').value || '',
-      serie:   document.getElementById('n-tv-serie').value || '',
-      ano:     document.getElementById('n-tv-ano').value || ''
-    },
-    defeito:   document.getElementById('n-tv-defeito').value || '',
-    checklist: checkState,
-    servicos:  nServicos,
-    total:     total,
-    tecnico:   document.getElementById('n-tecnico').value || '',
-    prazo:     document.getElementById('n-prazo').value || '',
-    status:    'Aberta'
+function ncRemSrv(i){ncSrv.splice(i,1);ncRenderSrv();}
+async function salvarOS(){
+  var nome=(document.getElementById('nc-nome').value||'').trim();
+  if(!nome){showToast('Informe o nome do cliente');return;}
+  var tot=ncSrv.reduce(function(a,s){return a+s.qtd*s.val;},0);
+  var data={
+    cliente:{nome:nome,tel:document.getElementById('nc-tel').value||'',doc:document.getElementById('nc-doc').value||'',email:document.getElementById('nc-email').value||''},
+    tv:{marca:document.getElementById('nc-marca').value||'',tipo:document.getElementById('nc-tipo').value||'',modelo:document.getElementById('nc-modelo').value||'',tamanho:document.getElementById('nc-tam').value||'',serie:document.getElementById('nc-serie').value||'',ano:document.getElementById('nc-ano').value||''},
+    defeito:document.getElementById('nc-defeito').value||'',
+    checklist:chkState,servicos:ncSrv,total:tot,
+    tecnico:document.getElementById('nc-tec').value||'',
+    prazo:document.getElementById('nc-prazo').value||'',
+    status:'Aberta'
   };
-  try {
-    var r = await req('/os/nova', 'POST', os_data);
-    toast('OS #' + r.num + ' criada com sucesso!');
-    initNovaOS();
-    aba('ordens', 'nav-ord');
-  } catch(e) { toast('Erro ao salvar OS: ' + (e.message||'')); }
+  try{
+    var r=await apiReq('/os/nova','POST',data);
+    showToast('OS #'+r.num+' criada com sucesso!');
+    initNova(); goTab('ord','n-ord');
+  }catch(e){showToast('Erro ao salvar: '+(e.message||''));}
 }
 
-function cancelarNovaOS() {
-  aba('dashboard', 'nav-dash');
-}
-
-// Helpers
-async function req(path, method, body) {
-  method = method || 'GET';
-  var opts = {method: method, headers: {'Content-Type':'application/json','Authorization':'Bearer '+TOKEN}};
-  if (body) opts.body = JSON.stringify(body);
-  var r = await fetch(API + path, opts);
-  var d = await r.json();
-  if (!r.ok) throw new Error(d.detail || 'Erro');
+// ── Helpers ────────────────────────────────────────────────────────────────────
+async function apiReq(path,method,body){
+  method=method||'GET';
+  var opts={method:method,headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOK}};
+  if(body) opts.body=JSON.stringify(body);
+  var r=await fetch(API+path,opts);
+  var d=await r.json();
+  if(!r.ok) throw new Error(d.detail||'Erro');
   return d;
 }
-async function fetchPublico(path, method, body) {
-  method = method || 'GET';
-  var opts = {method: method, headers: {'Content-Type':'application/json'}};
-  if (body) opts.body = JSON.stringify(body);
-  var r = await fetch(API + path, opts);
-  var d = await r.json();
-  if (!r.ok) throw new Error(d.detail || 'Erro');
+async function apiFetch(path,method,body){
+  method=method||'GET';
+  var opts={method:method,headers:{'Content-Type':'application/json'}};
+  if(body) opts.body=JSON.stringify(body);
+  var r=await fetch(API+path,opts);
+  var d=await r.json();
+  if(!r.ok) throw new Error(d.detail||'Erro');
   return d;
 }
-function bc(s) {
-  var m = {'Aberta':'b-aberta','Em andamento':'b-andamento','Orcamento':'b-orc','Pronto':'b-pronto','Entregue':'b-entregue'};
-  return m[s] || 'b-entregue';
-}
-function fmt(v) { return (parseFloat(v)||0).toFixed(2).replace('.',','); }
-function toast(msg, d) {
-  d = d || 3000;
-  var t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(function(){ t.classList.remove('show'); }, d);
+function bc(s){var m={'Aberta':'b-ab','Em andamento':'b-an','Orcamento':'b-or','Pronto':'b-pr','Entregue':'b-en'};return m[s]||'b-en';}
+function fmt(v){return (parseFloat(v)||0).toFixed(2).replace('.',',');}
+function showToast(msg,d){
+  d=d||3000;var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('on');
+  setTimeout(function(){t.classList.remove('on');},d);
 }
 </script>
 </body>
