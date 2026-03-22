@@ -636,34 +636,19 @@ async function salvarOS(){
 
 
 // ── Impressão PDF ──────────────────────────────────────────────────────────────
-async function imprimirOS(num) {
-  showToast('Gerando OS...');
-  try {
-    var r = await apiReq('/pdf/os/'+num);
-    abrirPDF(r.url);
-  } catch(e) { showToast('Erro: '+(e.message||'')); }
+function imprimirOS(num) {
+  var url = API + '/pdf/os/' + num + '?tok=' + encodeURIComponent(TOK);
+  window.open(url, '_blank');
 }
 
-async function imprimirLaudo(num) {
-  showToast('Gerando Laudo...');
-  try {
-    var r = await apiReq('/pdf/laudo/'+num);
-    abrirPDF(r.url);
-  } catch(e) { showToast('Erro: '+(e.message||'')); }
+function imprimirLaudo(num) {
+  var url = API + '/pdf/laudo/' + num + '?tok=' + encodeURIComponent(TOK);
+  window.open(url, '_blank');
 }
 
-async function imprimirNF(num) {
-  showToast('Gerando NF...');
-  try {
-    var r = await apiReq('/pdf/nf/'+num);
-    abrirPDF(r.url);
-  } catch(e) { showToast('Erro ao gerar NF: '+(e.message||'')); }
-}
-
-function abrirPDF(url) {
-  var a = document.createElement('a');
-  a.href = url; a.target = '_blank'; a.rel = 'noopener';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+function imprimirNF(num) {
+  var url = API + '/pdf/nf/' + num + '?tok=' + encodeURIComponent(TOK);
+  window.open(url, '_blank');
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
