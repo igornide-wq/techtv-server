@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
-import json, os, hashlib, secrets, sqlite3
+import json, os, hashlib, secrets, sqlite3, tempfile
 
 app = FastAPI(title="TechTV API", version="2.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
@@ -34,6 +34,12 @@ def init_db():
             num INTEGER PRIMARY KEY,
             dados TEXT NOT NULL,
             atualizado TEXT
+        )
+    """)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS config (
+            chave TEXT PRIMARY KEY,
+            dados TEXT NOT NULL
         )
     """)
     conn.execute("""
@@ -241,6 +247,326 @@ def criar_os_web(os_data: NovaOSWeb, usuario=Depends(verificar_token)):
     _save_ordem(o)
     return {"ok": True, "num": prox_num}
 
+
+# ── Geração de PDF ─────────────────────────────────────────────────────────────
+def _config_empresa():
+    """Retorna configuração da empresa salva."""
+    conn = get_db()
+    try:
+        row = conn.execute("SELECT dados FROM config WHERE chave='empresa'").fetchone()
+        return json.loads(row["dados"]) if row else {}
+    except Exception:
+        return {}
+    finally:
+        conn.close()
+
+def _gerar_pdf_os_simples(o):
+    """Gera PDF da OS usando reportlab."""
+    try:
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib.units import mm
+        from reportlab.lib import colors
+        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, HRFlowable
+        from reportlab.lib.styles import ParagraphStyle
+        from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+
+        tmp = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False, prefix="os_")
+        tmp.close()
+        cfg = _config_empresa()
+        W = 170*mm
+
+        doc = SimpleDocTemplate(tmp.name, pagesize=A4,
+              leftMargin=20*mm, rightMargin=20*mm, topMargin=15*mm, bottomMargin=15*mm)
+
+        def ps(name, **kw): return ParagraphStyle(name, **kw)
+        E = {
+            'emp':   ps('e', fontSize=16, fontName='Helvetica-Bold', alignment=TA_CENTER),
+            'sub':   ps('s', fontSize=9,  fontName='Helvetica', alignment=TA_CENTER, textColor=colors.grey),
+            'tit':   ps('t', fontSize=12, fontName='Helvetica-Bold'),
+            'val':   ps('v', fontSize=9,  fontName='Helvetica'),
+            'lbl':   ps('l', fontSize=7,  fontName='Helvetica-Bold', textColor=colors.grey),
+            'sec':   ps('sc', fontSize=9, fontName='Helvetica-Bold', textColor=colors.white),
+            'tot':   ps('tt', fontSize=11, fontName='Helvetica-Bold', alignment=TA_RIGHT),
+            'obs':   ps('o', fontSize=8,  fontName='Helvetica', textColor=colors.grey, alignment=TA_RIGHT),
+            'rod':   ps('r', fontSize=7,  fontName='Helvetica', textColor=colors.grey, alignment=TA_CENTER),
+            'ass':   ps('a', fontSize=7,  fontName='Helvetica', textColor=colors.grey, alignment=TA_CENTER),
+        }
+
+        story = []
+        empresa = cfg.get("empresa", "Assistência Técnica")
+        cnpj = cfg.get("cnpj",""); tel = cfg.get("telefone","")
+        end = cfg.get("endereco",""); email_e = cfg.get("email_empresa","")
+
+        # Cabeçalho azul
+        from reportlab.platypus import Table as PT
+        emp_s = ParagraphStyle('es', fontSize=17, fontName='Helvetica-Bold', textColor=colors.white, alignment=TA_CENTER)
+        sub_s = ParagraphStyle('ss', fontSize=8,  fontName='Helvetica', textColor=colors.HexColor('#d0e8ff'), alignment=TA_CENTER)
+        cab = [Paragraph(empresa, emp_s)]
+        info = []
+        if cnpj: info.append("CNPJ: "+cnpj)
+        if tel:  info.append("Tel: "+tel)
+        if email_e: info.append(email_e)
+        if info: cab.append(Paragraph("  |  ".join(info), sub_s))
+        if end:  cab.append(Paragraph(end, sub_s))
+
+        t_cab = PT([[cab]], colWidths=[W])
+        t_cab.setStyle(TableStyle([
+            ('BACKGROUND',(0,0),(-1,-1),colors.HexColor('#1e3a5f')),
+            ('PADDING',(0,0),(-1,-1),12),
+        ]))
+        story.append(t_cab)
+        story.append(Spacer(1,6))
+
+        # Título doc
+        cli = o.get("cliente",{}); tv = o.get("tv",{})
+        num = o.get("num",""); data = o.get("data_entrada","")
+        tit_s = ParagraphStyle('ts', fontSize=13, fontName='Helvetica-Bold', textColor=colors.HexColor('#1e3a5f'))
+        num_s = ParagraphStyle('ns', fontSize=9, fontName='Helvetica', textColor=colors.grey, alignment=TA_RIGHT)
+        t_tit = PT([[Paragraph("ORDEM DE SERVIÇO", tit_s), Paragraph(f"#{num}\n{data}", num_s)]], colWidths=[W*0.65, W*0.35])
+        t_tit.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'MIDDLE'),('LINEBELOW',(0,0),(-1,-1),1.5,colors.HexColor('#1e3a5f')),('PADDING',(0,0),(-1,-1),5)]))
+        story.append(t_tit); story.append(Spacer(1,6))
+
+        def sec_bar(txt):
+            t = PT([[Paragraph(txt, E['sec'])]], colWidths=[W])
+            t.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,-1),colors.HexColor('#1e3a5f')),('PADDING',(0,0),(-1,-1),5)]))
+            return t
+
+        def grid(rows, cols):
+            t = PT(rows, colWidths=cols)
+            t.setStyle(TableStyle([('GRID',(0,0),(-1,-1),0.3,colors.lightgrey),('BACKGROUND',(0,0),(0,-1),colors.HexColor('#f8f8f8')),('BACKGROUND',(2,0),(2,-1),colors.HexColor('#f8f8f8')),('PADDING',(0,0),(-1,-1),5)]))
+            return t
+
+        story.append(sec_bar("  DADOS DO CLIENTE"))
+        story.append(grid([
+            [Paragraph("Nome",E['lbl']),Paragraph(cli.get("nome",""),E['val']),Paragraph("Telefone",E['lbl']),Paragraph(cli.get("tel",""),E['val'])],
+            [Paragraph("CPF/CNPJ",E['lbl']),Paragraph(cli.get("doc",""),E['val']),Paragraph("E-mail",E['lbl']),Paragraph(cli.get("email",""),E['val'])],
+        ],[W*.14,W*.36,W*.14,W*.36]))
+
+        story.append(sec_bar("  DADOS DO APARELHO"))
+        story.append(grid([
+            [Paragraph("Marca",E['lbl']),Paragraph(tv.get("marca",""),E['val']),Paragraph("Modelo",E['lbl']),Paragraph(tv.get("modelo",""),E['val'])],
+            [Paragraph("Tipo",E['lbl']),Paragraph(tv.get("tipo",""),E['val']),Paragraph("Nº Série",E['lbl']),Paragraph(tv.get("serie",""),E['val'])],
+        ],[W*.14,W*.36,W*.14,W*.36]))
+        story.append(Spacer(1,3))
+        story.append(Paragraph("Defeito: "+o.get("defeito","—"), E['val']))
+
+        # Checklist
+        story.append(sec_bar("  CHECKLIST DE ENTRADA"))
+        chk = o.get("checklist",{})
+        CKITEMS = ['Controle remoto','Suporte','Pedestal','Cabo de força','Cabo HDMI','Cabo de antena','Tampa traseira','Parafusos','Manual','Caixa original','Pilhas no controle','Entradas sem dano','Tela sem trincas']
+        rows_ch = [CKITEMS[i:i+4] for i in range(0,len(CKITEMS),4)]
+        ch_data = []
+        for linha in rows_ch:
+            row = []
+            for item in linha:
+                ok = chk.get(item,False)
+                cor = colors.HexColor('#b91c1c') if ok else colors.HexColor('#888888')
+                p = ParagraphStyle('ci',fontSize=8,fontName='Helvetica',textColor=cor)
+                row.append(Paragraph(('✕ ' if ok else '☐ ')+item, p))
+            while len(row)<4: row.append(Paragraph("",E['val']))
+            ch_data.append(row)
+        t_ch = PT(ch_data, colWidths=[W/4]*4)
+        t_ch.setStyle(TableStyle([('GRID',(0,0),(-1,-1),0.3,colors.lightgrey),('PADDING',(0,0),(-1,-1),5)]))
+        story.append(t_ch)
+
+        # Serviços
+        story.append(sec_bar("  SERVIÇOS / PEÇAS"))
+        srvs = o.get("servicos",[])
+        srv_rows = [[Paragraph(h,E['lbl']) for h in ["Descrição","Qtd","Valor unit.","Subtotal"]]]
+        for s in srvs:
+            sub = s.get("qtd",1)*s.get("val",0)
+            srv_rows.append([Paragraph(s.get("desc",""),E['val']),Paragraph(str(s.get("qtd",1)),E['val']),Paragraph(f"R$ {s.get('val',0):.2f}",E['val']),Paragraph(f"R$ {sub:.2f}",E['val'])])
+        if not srvs: srv_rows.append([Paragraph("—",E['val'])]+[Paragraph("",E['val'])]*3)
+        total = sum(s.get("qtd",1)*s.get("val",0) for s in srvs)
+        srv_rows.append(["","",Paragraph("TOTAL:",E['tot']),Paragraph(f"R$ {total:.2f}",E['tot'])])
+        t_srv = PT(srv_rows, colWidths=[W*.55,W*.1,W*.175,W*.175])
+        t_srv.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#eeeeee')),('GRID',(0,0),(-1,-2),0.3,colors.lightgrey),('LINEABOVE',(0,-1),(-1,-1),1,colors.black),('PADDING',(0,0),(-1,-1),5)]))
+        story.append(t_srv)
+
+        story.append(Spacer(1,4))
+        story.append(Paragraph(f"Técnico: {o.get('tecnico','—')}  |  Prazo: {o.get('prazo','—')}  |  Status: {o.get('status','Aberta')}", E['obs']))
+
+        # Assinaturas
+        story.append(Spacer(1,14))
+        ass_s = ParagraphStyle('as', fontSize=8, fontName='Helvetica', textColor=colors.grey, alignment=TA_CENTER)
+        t_ass = PT([[HRFlowable(width=W*0.42,thickness=0.8,color=colors.black),"",HRFlowable(width=W*0.42,thickness=0.8,color=colors.black)],[Paragraph("Assinatura do cliente",ass_s),"",Paragraph("Assinatura do técnico",ass_s)]],colWidths=[W*0.42,W*0.16,W*0.42])
+        t_ass.setStyle(TableStyle([('ALIGN',(0,0),(-1,-1),'CENTER'),('VALIGN',(0,0),(-1,-1),'BOTTOM')]))
+        story.append(t_ass)
+
+        story.append(Spacer(1,8))
+        story.append(Paragraph(f"Gerado em {datetime.now().strftime('%d/%m/%Y %H:%M')} — {empresa}", E['rod']))
+
+        doc.build(story)
+        return tmp.name
+    except ImportError:
+        return None
+
+@app.get("/pdf/os/{numero}")
+def pdf_os(numero: int, usuario=Depends(verificar_token)):
+    o = _get_ordem(numero)
+    if not o: raise HTTPException(404, "OS não encontrada")
+    cam = _gerar_pdf_os_simples(o)
+    if not cam:
+        raise HTTPException(500, "Instale reportlab no servidor: pip install reportlab")
+    from fastapi.responses import FileResponse
+    return FileResponse(cam, media_type="application/pdf",
+                        filename=f"OS_{numero}.pdf",
+                        headers={"Content-Disposition": f"inline; filename=OS_{numero}.pdf"})
+
+@app.get("/pdf/laudo/{numero}")
+def pdf_laudo(numero: int, usuario=Depends(verificar_token)):
+    o = _get_ordem(numero)
+    if not o: raise HTTPException(404, "OS não encontrada")
+    # Gera laudo simples
+    try:
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib.units import mm
+        from reportlab.lib import colors
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
+        from reportlab.lib.styles import ParagraphStyle
+        from reportlab.lib.enums import TA_CENTER, TA_RIGHT
+
+        tmp = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False, prefix="laudo_")
+        tmp.close()
+        cfg = _config_empresa()
+        W = 170*mm
+        doc = SimpleDocTemplate(tmp.name, pagesize=A4, leftMargin=20*mm, rightMargin=20*mm, topMargin=15*mm, bottomMargin=15*mm)
+        story = []
+        empresa = cfg.get("empresa","Assistência Técnica")
+
+        emp_s = ParagraphStyle('es',fontSize=17,fontName='Helvetica-Bold',textColor=colors.white,alignment=TA_CENTER)
+        sub_s = ParagraphStyle('ss',fontSize=8,fontName='Helvetica',textColor=colors.HexColor('#d0e8ff'),alignment=TA_CENTER)
+        info = []
+        if cfg.get("cnpj"): info.append("CNPJ: "+cfg["cnpj"])
+        if cfg.get("telefone"): info.append("Tel: "+cfg["telefone"])
+        cab_cont = [Paragraph(empresa, emp_s)]
+        if info: cab_cont.append(Paragraph("  |  ".join(info), sub_s))
+        t_cab = Table([[cab_cont]], colWidths=[W])
+        t_cab.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,-1),colors.HexColor('#1e3a5f')),('PADDING',(0,0),(-1,-1),12)]))
+        story.append(t_cab); story.append(Spacer(1,6))
+
+        tit_s = ParagraphStyle('ts',fontSize=13,fontName='Helvetica-Bold',textColor=colors.HexColor('#1e3a5f'))
+        num_s = ParagraphStyle('ns',fontSize=9,fontName='Helvetica',textColor=colors.grey,alignment=TA_RIGHT)
+        t_tit = Table([[Paragraph("LAUDO TÉCNICO",tit_s),Paragraph(f"OS #{o.get('num','')}\n{o.get('data_entrada','')}",num_s)]],colWidths=[W*0.65,W*0.35])
+        t_tit.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'MIDDLE'),('LINEBELOW',(0,0),(-1,-1),1.5,colors.HexColor('#1e3a5f')),('PADDING',(0,0),(-1,-1),5)]))
+        story.append(t_tit); story.append(Spacer(1,8))
+
+        val_s = ParagraphStyle('v',fontSize=9,fontName='Helvetica',leading=14)
+        lbl_s = ParagraphStyle('l',fontSize=9,fontName='Helvetica-Bold',spaceBefore=8,spaceAfter=2)
+        cli = o.get("cliente",{}); tv = o.get("tv",{})
+
+        for lbl,val in [("Cliente:",cli.get("nome","")),("Telefone:",cli.get("tel","")),("Aparelho:",tv.get("marca","")+" "+tv.get("modelo","")),("Defeito relatado:",o.get("defeito",""))]:
+            story.append(Paragraph(lbl,lbl_s)); story.append(Paragraph(val or "—",val_s))
+
+        story.append(Paragraph("Diagnóstico Técnico:",lbl_s))
+        story.append(Paragraph(o.get("laudo_diagnostico","") or "","" and val_s or val_s))
+        story.append(Spacer(1,30 if not o.get("laudo_diagnostico") else 4))
+
+        story.append(Paragraph("Serviços Realizados:",lbl_s))
+        story.append(Paragraph(o.get("laudo_servicos_realizados","") or "",val_s))
+        story.append(Spacer(1,30 if not o.get("laudo_servicos_realizados") else 4))
+
+        story.append(Paragraph("Garantia:",lbl_s))
+        story.append(Paragraph(o.get("laudo_garantia","Garantia de 90 dias.") or "Garantia de 90 dias.",val_s))
+
+        story.append(Spacer(1,20))
+        ass_s2 = ParagraphStyle('as',fontSize=8,fontName='Helvetica',textColor=colors.grey,alignment=TA_CENTER)
+        t_ass = Table([[HRFlowable(width=W*0.42,thickness=0.8,color=colors.black),"",HRFlowable(width=W*0.42,thickness=0.8,color=colors.black)],[Paragraph("Assinatura do cliente",ass_s2),"",Paragraph("Assinatura do técnico",ass_s2)]],colWidths=[W*0.42,W*0.16,W*0.42])
+        t_ass.setStyle(TableStyle([('ALIGN',(0,0),(-1,-1),'CENTER'),('VALIGN',(0,0),(-1,-1),'BOTTOM')]))
+        story.append(t_ass)
+        doc.build(story)
+        from fastapi.responses import FileResponse
+        return FileResponse(tmp.name, media_type="application/pdf",
+                            filename=f"Laudo_{numero}.pdf",
+                            headers={"Content-Disposition": f"inline; filename=Laudo_{numero}.pdf"})
+    except ImportError:
+        raise HTTPException(500, "Instale reportlab: pip install reportlab")
+
+@app.get("/pdf/nf/{numero}")
+def pdf_nf(numero: int, usuario=Depends(verificar_token)):
+    o = _get_ordem(numero)
+    if not o: raise HTTPException(404, "OS não encontrada")
+    try:
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib.units import mm
+        from reportlab.lib import colors
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
+        from reportlab.lib.styles import ParagraphStyle
+        from reportlab.lib.enums import TA_CENTER, TA_RIGHT
+
+        tmp = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False, prefix="nf_")
+        tmp.close()
+        cfg = _config_empresa()
+        W = 170*mm
+        doc = SimpleDocTemplate(tmp.name, pagesize=A4, leftMargin=20*mm, rightMargin=20*mm, topMargin=15*mm, bottomMargin=15*mm)
+        story = []
+        empresa = cfg.get("empresa","Assistência Técnica")
+
+        emp_s = ParagraphStyle('es',fontSize=17,fontName='Helvetica-Bold',textColor=colors.white,alignment=TA_CENTER)
+        sub_s = ParagraphStyle('ss',fontSize=8,fontName='Helvetica',textColor=colors.HexColor('#d0e8ff'),alignment=TA_CENTER)
+        info = []
+        if cfg.get("cnpj"): info.append("CNPJ: "+cfg["cnpj"])
+        if cfg.get("telefone"): info.append("Tel: "+cfg["telefone"])
+        if cfg.get("email_empresa"): info.append(cfg["email_empresa"])
+        cab_cont = [Paragraph(empresa, emp_s)]
+        if info: cab_cont.append(Paragraph("  |  ".join(info), sub_s))
+        if cfg.get("endereco"): cab_cont.append(Paragraph(cfg["endereco"], sub_s))
+        t_cab = Table([[cab_cont]], colWidths=[W])
+        t_cab.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,-1),colors.HexColor('#1e3a5f')),('PADDING',(0,0),(-1,-1),12)]))
+        story.append(t_cab); story.append(Spacer(1,6))
+
+        av_s = ParagraphStyle('av',fontSize=8,fontName='Helvetica',textColor=colors.HexColor('#854F0B'),alignment=TA_CENTER,backColor=colors.HexColor('#FAEEDA'),borderPad=4)
+        story.append(Paragraph("⚠ DOCUMENTO INTERNO — Não possui validade fiscal perante a Receita Federal", av_s))
+        story.append(Spacer(1,8))
+
+        tit_s = ParagraphStyle('ts',fontSize=13,fontName='Helvetica-Bold',textColor=colors.HexColor('#1e3a5f'))
+        num_s2 = ParagraphStyle('ns',fontSize=9,fontName='Helvetica',textColor=colors.grey,alignment=TA_RIGHT)
+        t_tit = Table([[Paragraph("RECIBO / NOTA FISCAL INTERNA",tit_s),Paragraph(f"OS #{o.get('num','')}\n{o.get('data_entrada','')}",num_s2)]],colWidths=[W*0.65,W*0.35])
+        t_tit.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'MIDDLE'),('LINEBELOW',(0,0),(-1,-1),1.5,colors.HexColor('#1e3a5f')),('PADDING',(0,0),(-1,-1),5)]))
+        story.append(t_tit); story.append(Spacer(1,8))
+
+        lbl_s = ParagraphStyle('l',fontSize=7,fontName='Helvetica-Bold',textColor=colors.grey)
+        val_s = ParagraphStyle('v',fontSize=9,fontName='Helvetica')
+        cli = o.get("cliente",{})
+        def gs(r,c):
+            t=Table(r,colWidths=c)
+            t.setStyle(TableStyle([('GRID',(0,0),(-1,-1),0.3,colors.lightgrey),('BACKGROUND',(0,0),(0,-1),colors.HexColor('#f8f8f8')),('BACKGROUND',(2,0),(2,-1),colors.HexColor('#f8f8f8')),('PADDING',(0,0),(-1,-1),5)]))
+            return t
+        story.append(Paragraph("CLIENTE", ParagraphStyle('sec',fontSize=9,fontName='Helvetica-Bold',textColor=colors.white,spaceBefore=4,spaceAfter=2)))
+        t_cli = Table([[Paragraph("CLIENTE",ParagraphStyle('sc',fontSize=9,fontName='Helvetica-Bold',textColor=colors.white))]], colWidths=[W])
+        t_cli.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,-1),colors.HexColor('#1e3a5f')),('PADDING',(0,0),(-1,-1),5)]))
+        story.append(t_cli)
+        story.append(gs([[Paragraph("Nome",lbl_s),Paragraph(cli.get("nome",""),val_s),Paragraph("Telefone",lbl_s),Paragraph(cli.get("tel",""),val_s)],[Paragraph("CPF/CNPJ",lbl_s),Paragraph(cli.get("doc",""),val_s),Paragraph("E-mail",lbl_s),Paragraph(cli.get("email",""),val_s)]],[W*.14,W*.36,W*.14,W*.36]))
+
+        tot_s = ParagraphStyle('tt',fontSize=11,fontName='Helvetica-Bold',alignment=TA_RIGHT)
+        srvs = o.get("servicos",[])
+        srv_rows = [[Paragraph(h,lbl_s) for h in ["Descrição","Qtd","Valor unit.","Subtotal"]]]
+        for s in srvs:
+            sub = s.get("qtd",1)*s.get("val",0)
+            srv_rows.append([Paragraph(s.get("desc",""),val_s),Paragraph(str(s.get("qtd",1)),val_s),Paragraph(f"R$ {s.get('val',0):.2f}",val_s),Paragraph(f"R$ {sub:.2f}",val_s)])
+        total = sum(s.get("qtd",1)*s.get("val",0) for s in srvs)
+        srv_rows.append(["","",Paragraph("TOTAL:",tot_s),Paragraph(f"R$ {total:.2f}",tot_s)])
+
+        t_srv2 = Table([[Paragraph("SERVIÇOS / PEÇAS", ParagraphStyle('sc2',fontSize=9,fontName='Helvetica-Bold',textColor=colors.white))]], colWidths=[W])
+        t_srv2.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,-1),colors.HexColor('#1e3a5f')),('PADDING',(0,0),(-1,-1),5)]))
+        story.append(t_srv2)
+        t_srv3 = Table(srv_rows, colWidths=[W*.55,W*.1,W*.175,W*.175])
+        t_srv3.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#eeeeee')),('GRID',(0,0),(-1,-2),0.3,colors.lightgrey),('LINEABOVE',(0,-1),(-1,-1),1.5,colors.black),('PADDING',(0,0),(-1,-1),5)]))
+        story.append(t_srv3)
+
+        story.append(Spacer(1,20))
+        ass_s3 = ParagraphStyle('as3',fontSize=8,fontName='Helvetica',textColor=colors.grey,alignment=TA_CENTER)
+        t_ass2 = Table([[HRFlowable(width=W*0.42,thickness=0.8,color=colors.black),"",HRFlowable(width=W*0.42,thickness=0.8,color=colors.black)],[Paragraph("Assinatura do responsável",ass_s3),"",Paragraph("Assinatura do cliente",ass_s3)]],colWidths=[W*0.42,W*0.16,W*0.42])
+        t_ass2.setStyle(TableStyle([('ALIGN',(0,0),(-1,-1),'CENTER'),('VALIGN',(0,0),(-1,-1),'BOTTOM')]))
+        story.append(t_ass2)
+        doc.build(story)
+        from fastapi.responses import FileResponse
+        return FileResponse(tmp.name, media_type="application/pdf",
+                            filename=f"NF_{numero}.pdf",
+                            headers={"Content-Disposition": f"inline; filename=NF_{numero}.pdf"})
+    except ImportError:
+        raise HTTPException(500, "Instale reportlab: pip install reportlab")
+
 # ── Rotas autenticadas ─────────────────────────────────────────────────────────
 @app.get("/os")
 def listar_ordens(status: Optional[str] = None, busca: Optional[str] = None,
@@ -346,12 +672,23 @@ def dashboard(usuario=Depends(verificar_token)):
                         "status":o.get("status","")} for o in ordens[:8]],
     }
 
+class SyncPayload(BaseModel):
+    ordens: List[dict]
+    config: Optional[dict] = None
+
 @app.post("/sync/upload")
-def sync_upload(payload: OrdemImport, x_api_secret: str = Header(None)):
+def sync_upload(payload: SyncPayload, x_api_secret: str = Header(None)):
     if (x_api_secret or "").strip() != API_SECRET.strip():
         raise HTTPException(403, "Chave de sincronização inválida")
     for o in payload.ordens:
         _save_ordem(o)
+    # Salvar config da empresa se enviada
+    if payload.config:
+        conn = get_db()
+        conn.execute("INSERT INTO config (chave, dados) VALUES (?, ?) ON CONFLICT(chave) DO UPDATE SET dados=excluded.dados",
+                     ("empresa", json.dumps(payload.config, ensure_ascii=False)))
+        conn.commit()
+        conn.close()
     return {"ok": True, "sincronizadas": len(payload.ordens)}
 
 @app.get("/sync/download")
