@@ -114,6 +114,8 @@ input:focus,select:focus{border-color:var(--azul)}
 .vazio{text-align:center;padding:36px;color:var(--cinza);font-size:14px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;z-index:999;opacity:0;transition:opacity 0.25s;max-width:90%;text-align:center;pointer-events:none}
 .toast.show{opacity:1}
+.check-item{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid var(--borda);border-radius:8px;cursor:pointer;margin-bottom:6px;font-size:13px}
+.check-item.checked{background:#f0fdf4;border-color:#86efac;color:var(--verde)}
 </style>
 </head>
 <body>
@@ -178,6 +180,7 @@ input:focus,select:focus{border-color:var(--azul)}
     <button class="nav-btn ativo" id="nav-dash" onclick="aba('dashboard','nav-dash')">Dashboard</button>
     <button class="nav-btn" id="nav-ord" onclick="aba('ordens','nav-ord')">Ordens</button>
     <button class="nav-btn" id="nav-bus" onclick="aba('buscar','nav-bus')">Buscar</button>
+    <button class="nav-btn" id="nav-nova" onclick="aba('nova-os','nav-nova')">+ Nova OS</button>
   </nav>
   <div id="tela-dashboard" class="tela ativa">
     <div id="d-metricas" class="metricas"><div class="metrica"><div class="spin"></div></div></div>
@@ -201,6 +204,80 @@ input:focus,select:focus{border-color:var(--azul)}
     </div>
     <div id="b-lista"></div>
   </div>
+
+  <div id="tela-nova-os" class="tela">
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-head">Dados do Cliente</div>
+      <div class="card-body">
+        <div class="campo"><label>Nome completo *</label><input id="n-cli-nome" placeholder="Nome do cliente"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="campo"><label>Telefone</label><input id="n-cli-tel" placeholder="(51) 99999-9999" type="tel"></div>
+          <div class="campo"><label>CPF/CNPJ</label><input id="n-cli-doc" placeholder="000.000.000-00"></div>
+        </div>
+        <div class="campo"><label>E-mail</label><input id="n-cli-email" placeholder="email@exemplo.com" type="email"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-head">Dados do Aparelho</div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="campo"><label>Marca</label>
+            <select id="n-tv-marca">
+              <option>Samsung</option><option>LG</option><option>Sony</option>
+              <option>Philips</option><option>TCL</option><option>Hisense</option>
+              <option>Panasonic</option><option>Outras</option>
+            </select>
+          </div>
+          <div class="campo"><label>Tipo</label>
+            <select id="n-tv-tipo">
+              <option>Smart TV</option><option>LED</option><option>OLED</option>
+              <option>QLED</option><option>LCD</option><option>Plasma</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:10px">
+          <div class="campo"><label>Modelo</label><input id="n-tv-modelo" placeholder="Ex: UN55TU7000"></div>
+          <div class="campo"><label>Tamanho (pol.)</label><input id="n-tv-tam" placeholder="55" type="number"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="campo"><label>Nº Série</label><input id="n-tv-serie" placeholder="Número de série"></div>
+          <div class="campo"><label>Ano</label><input id="n-tv-ano" placeholder="2022" type="number"></div>
+        </div>
+        <div class="campo"><label>Defeito relatado</label>
+          <textarea id="n-tv-defeito" placeholder="Descreva o problema..." style="height:70px;resize:none"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-head">Checklist de Entrada</div>
+      <div class="card-body" id="n-checklist"></div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-head">Serviços e Peças</div>
+      <div class="card-body">
+        <div id="n-srv-lista" style="margin-bottom:10px"></div>
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-bottom:8px">
+          <input id="n-srv-desc" placeholder="Descrição do serviço/peça">
+          <input id="n-srv-qtd" type="number" value="1" min="1" placeholder="Qtd">
+          <input id="n-srv-val" type="number" placeholder="R$ 0,00" step="0.01">
+        </div>
+        <button class="btn btn-verde btn-sm" style="width:100%" onclick="nAddServico()">+ Adicionar item</button>
+        <div id="n-total" style="text-align:right;font-size:16px;font-weight:800;margin-top:10px;padding-top:10px;border-top:1px solid var(--borda)">Total: R$ 0,00</div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-head">Informações Adicionais</div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="campo"><label>Técnico responsável</label><input id="n-tecnico" placeholder="Nome do técnico"></div>
+          <div class="campo"><label>Prazo previsto</label><input id="n-prazo" type="date"></div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-azul" onclick="salvarNovaOS()">Salvar OS</button>
+    <button class="btn btn-cinza" style="margin-top:10px" onclick="cancelarNovaOS()">Cancelar</button>
+  </div>
+
 </div>
 
 <!-- MODAL OS -->
@@ -415,6 +492,7 @@ function aba(nome, navId) {
   document.getElementById(navId).classList.add('ativo');
   if (nome === 'dashboard') carregarDashboard();
   if (nome === 'ordens') carregarOrdens(filtroAtual);
+  if (nome === 'nova-os') initNovaOS();
 }
 
 // Dashboard
@@ -599,6 +677,125 @@ async function salvarEdicao(num) {
 }
 
 function fecharModalOs() { document.getElementById('modal-os').classList.remove('show'); }
+
+
+// ── Nova OS ────────────────────────────────────────────────────────────────────
+var CHECKLIST = ['Controle remoto','Suporte/pedestal','Cabo de força','Cabo HDMI',
+  'Cabo de antena','Tampa traseira','Parafusos','Manual',
+  'Caixa original','Pilhas no controle','Entradas sem dano','Tela sem trincas'];
+var checkState = {};
+var nServicos = [];
+
+function initNovaOS() {
+  checkState = {};
+  nServicos = [];
+  // Limpar campos
+  ['n-cli-nome','n-cli-tel','n-cli-doc','n-cli-email',
+   'n-tv-modelo','n-tv-tam','n-tv-serie','n-tv-ano',
+   'n-tv-defeito','n-tecnico','n-srv-desc','n-srv-val'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) { el.value = ''; }
+  });
+  var qtdEl = document.getElementById('n-srv-qtd');
+  if (qtdEl) qtdEl.value = '1';
+  // Prazo padrão hoje
+  var hoje = new Date(); var mm = String(hoje.getMonth()+1).padStart(2,'0'); var dd = String(hoje.getDate()).padStart(2,'0');
+  var prazoEl = document.getElementById('n-prazo');
+  if (prazoEl) prazoEl.value = hoje.getFullYear() + '-' + mm + '-' + dd;
+  renderChecklist();
+  nRenderServicos();
+}
+
+function renderChecklist() {
+  var el = document.getElementById('n-checklist');
+  if (!el) return;
+  el.innerHTML = CHECKLIST.map(function(item) {
+    var ok = checkState[item] || false;
+    return '<div class="check-item' + (ok?' checked':'') + '" onclick="toggleCheck('' + item + '')">' +
+      '<span>' + (ok?'☑':'☐') + '</span><span>' + item + '</span></div>';
+  }).join('');
+}
+
+function toggleCheck(item) {
+  checkState[item] = !checkState[item];
+  renderChecklist();
+}
+
+function nAddServico() {
+  var desc = document.getElementById('n-srv-desc').value.trim();
+  var qtd  = parseFloat(document.getElementById('n-srv-qtd').value) || 1;
+  var val  = parseFloat(document.getElementById('n-srv-val').value) || 0;
+  if (!desc) { toast('Informe a descrição'); return; }
+  nServicos.push({desc:desc, qtd:qtd, val:val});
+  document.getElementById('n-srv-desc').value = '';
+  document.getElementById('n-srv-val').value = '';
+  document.getElementById('n-srv-qtd').value = '1';
+  nRenderServicos();
+}
+
+function nRenderServicos() {
+  var el = document.getElementById('n-srv-lista');
+  if (!el) return;
+  if (!nServicos.length) {
+    el.innerHTML = '<div style="color:var(--cinza);font-size:13px;padding:4px">Nenhum item adicionado</div>';
+  } else {
+    el.innerHTML = nServicos.map(function(s, i) {
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda)">' +
+        '<div><div style="font-size:13px;font-weight:600">' + s.desc + '</div>' +
+        '<div style="font-size:11px;color:var(--cinza)">Qtd: ' + s.qtd + ' × R$ ' + fmt(s.val) + '</div></div>' +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+        '<span style="font-weight:700">R$ ' + fmt(s.qtd*s.val) + '</span>' +
+        '<button class="srv-del" onclick="nRemServico(' + i + ')">✕</button>' +
+        '</div></div>';
+    }).join('');
+  }
+  var total = nServicos.reduce(function(a,s){ return a+s.qtd*s.val; }, 0);
+  document.getElementById('n-total').textContent = 'Total: R$ ' + fmt(total);
+}
+
+function nRemServico(idx) {
+  nServicos.splice(idx, 1);
+  nRenderServicos();
+}
+
+async function salvarNovaOS() {
+  var nome = (document.getElementById('n-cli-nome').value || '').trim();
+  if (!nome) { toast('Informe o nome do cliente'); return; }
+  var total = nServicos.reduce(function(a,s){ return a+s.qtd*s.val; }, 0);
+  var os_data = {
+    cliente: {
+      nome: nome,
+      tel:   document.getElementById('n-cli-tel').value || '',
+      doc:   document.getElementById('n-cli-doc').value || '',
+      email: document.getElementById('n-cli-email').value || ''
+    },
+    tv: {
+      marca:   document.getElementById('n-tv-marca').value || '',
+      tipo:    document.getElementById('n-tv-tipo').value || '',
+      modelo:  document.getElementById('n-tv-modelo').value || '',
+      tamanho: document.getElementById('n-tv-tam').value || '',
+      serie:   document.getElementById('n-tv-serie').value || '',
+      ano:     document.getElementById('n-tv-ano').value || ''
+    },
+    defeito:   document.getElementById('n-tv-defeito').value || '',
+    checklist: checkState,
+    servicos:  nServicos,
+    total:     total,
+    tecnico:   document.getElementById('n-tecnico').value || '',
+    prazo:     document.getElementById('n-prazo').value || '',
+    status:    'Aberta'
+  };
+  try {
+    var r = await req('/os/nova', 'POST', os_data);
+    toast('OS #' + r.num + ' criada com sucesso!');
+    initNovaOS();
+    aba('ordens', 'nav-ord');
+  } catch(e) { toast('Erro ao salvar OS: ' + (e.message||'')); }
+}
+
+function cancelarNovaOS() {
+  aba('dashboard', 'nav-dash');
+}
 
 // Helpers
 async function req(path, method, body) {
