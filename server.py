@@ -67,10 +67,15 @@ def init_db():
 # ── Auth ───────────────────────────────────────────────────────────────────────
 init_db()
 
-def verificar_token(authorization: str = Header(None)):
-    if not authorization or not authorization.startswith("Bearer "):
+def verificar_token(authorization: str = Header(None), tok: Optional[str] = None):
+    # Aceita token via header Bearer OU via query param ?tok=
+    token = None
+    if authorization and authorization.startswith("Bearer "):
+        token = authorization[7:]
+    elif tok:
+        token = tok
+    if not token:
         raise HTTPException(401, "Token necessário")
-    token = authorization[7:]
     conn = get_db()
     row = conn.execute("SELECT * FROM usuarios WHERE token=?", (token,)).fetchone()
     conn.close()
