@@ -270,7 +270,7 @@ var filtroAtual = '';
 var srvEdit = [];
 var ncSrv = [];
 var chkState = {};
-var CHKLIST = ['Controle remoto','Suporte/pedestal','Cabo de força','Cabo HDMI','Cabo de antena','Tampa traseira','Parafusos','Manual','Caixa original','Pilhas no controle','Entradas sem dano','Tela sem trincas'];
+var CHKLIST = ['Controle remoto','Suporte','Pedestal','Cabo de força','Cabo HDMI','Cabo de antena','Tampa traseira','Parafusos','Manual','Caixa original','Pilhas no controle','Entradas sem dano','Tela sem trincas'];
 
 window.addEventListener('load', function() {
   if (TOK && USR) { showApp(); loadDash(); }
@@ -532,7 +532,12 @@ function renderModalOS(o) {
     '<div class="campo"><label>Observação</label><input id="ns-obs" placeholder="Ex: Aguardando peça..."></div>' +
     '</div></div>' +
     '<button class="btn btn-az" onclick="saveEdit('+o.num+')" style="margin-top:4px">Salvar alterações</button>' +
-    '<button class="btn btn-cz" onclick="closeOS()">Fechar</button>';
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">' +
+    '<button class="btn btn-vd btn-sm" style="width:100%" onclick="imprimirOS('+o.num+')">🖨️ OS</button>' +
+    '<button class="btn btn-vd btn-sm" style="width:100%" onclick="imprimirLaudo('+o.num+')">🖨️ Laudo</button>' +
+    '<button class="btn btn-vd btn-sm" style="width:100%" onclick="imprimirNF('+o.num+')">🖨️ NF</button>' +
+    '</div>' +
+    '<button class="btn btn-cz" onclick="closeOS()" style="margin-top:8px">Fechar</button>';
   if(hist.length){
     h+='<div class="sec">Histórico</div><div class="card"><div class="card-b">';
     hist.forEach(function(e){h+='<div class="hist"><b>'+e.de+'</b> → <b>'+e.para+'</b><div style="font-size:11px;color:var(--cinza)">'+e.por+' · '+e.em+'</div>'+(e.obs?'<div style="font-size:12px;color:var(--cinza)">'+e.obs+'</div>':'')+'</div>';});
@@ -627,6 +632,38 @@ async function salvarOS(){
     showToast('OS #'+r.num+' criada com sucesso!');
     initNova(); goTab('ord','n-ord');
   }catch(e){showToast('Erro ao salvar: '+(e.message||''));}
+}
+
+
+// ── Impressão PDF ──────────────────────────────────────────────────────────────
+async function imprimirOS(num) {
+  showToast('Gerando OS...');
+  try {
+    var r = await apiReq('/pdf/os/'+num);
+    abrirPDF(r.url);
+  } catch(e) { showToast('Erro: '+(e.message||'')); }
+}
+
+async function imprimirLaudo(num) {
+  showToast('Gerando Laudo...');
+  try {
+    var r = await apiReq('/pdf/laudo/'+num);
+    abrirPDF(r.url);
+  } catch(e) { showToast('Erro: '+(e.message||'')); }
+}
+
+async function imprimirNF(num) {
+  showToast('Gerando NF...');
+  try {
+    var r = await apiReq('/pdf/nf/'+num);
+    abrirPDF(r.url);
+  } catch(e) { showToast('Erro ao gerar NF: '+(e.message||'')); }
+}
+
+function abrirPDF(url) {
+  var a = document.createElement('a');
+  a.href = url; a.target = '_blank'; a.rel = 'noopener';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
